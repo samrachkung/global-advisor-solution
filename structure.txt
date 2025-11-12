@@ -1,0 +1,136 @@
+global-advisor-solution/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/
+│   │   │   │   ├── DashboardController.php
+│   │   │   │   ├── LoanTypeController.php
+│   │   │   │   ├── BlogController.php
+│   │   │   │   ├── JobController.php
+│   │   │   │   ├── ComplaintController.php
+│   │   │   │   └── SlideshowController.php
+│   │   │   ├── Frontend/
+│   │   │   │   ├── HomeController.php
+│   │   │   │   ├── LoanServiceController.php
+│   │   │   │   ├── BlogController.php
+│   │   │   │   ├── CareerController.php
+│   │   │   │   └── ContactController.php
+│   │   │   └── LanguageController.php
+│   │   ├── Middleware/
+│   │   │   ├── Localization.php
+│   │   │   └── AdminAuth.php
+│   │   └── Requests/
+│   │       ├── ComplaintRequest.php
+│   │       ├── ContactRequest.php
+│   │       └── Admin/
+│   │           ├── LoanTypeRequest.php
+│   │           ├── BlogRequest.php
+│   │           └── JobRequest.php
+│   ├── Models/
+│   │   ├── Language.php
+│   │   ├── LoanType.php
+│   │   ├── LoanTypeTranslation.php
+│   │   ├── LoanCondition.php
+│   │   ├── CollateralType.php
+│   │   ├── CollateralTypeTranslation.php
+│   │   ├── Page.php
+│   │   ├── PageTranslation.php
+│   │   ├── Slideshow.php
+│   │   ├── SlideshowTranslation.php
+│   │   ├── BlogCategory.php
+│   │   ├── BlogCategoryTranslation.php
+│   │   ├── BlogPost.php
+│   │   ├── BlogPostTranslation.php
+│   │   ├── JobPosition.php
+│   │   ├── JobPositionTranslation.php
+│   │   ├── JobApplication.php
+│   │   ├── Complaint.php
+│   │   ├── ComplaintResponse.php
+│   │   └── ContactMessage.php
+│   ├── Services/
+│   │   ├── LoanService.php
+│   │   ├── BlogService.php
+│   │   ├── JobService.php
+│   │   └── FileUploadService.php
+│   └── Traits/
+│       └── HasTranslations.php
+├── database/
+│   ├── migrations/
+│   │   ├── 2024_01_01_000001_create_languages_table.php
+│   │   ├── 2024_01_01_000002_create_loan_types_table.php
+│   │   ├── 2024_01_01_000003_create_loan_type_translations_table.php
+│   │   ├── 2024_01_01_000004_create_loan_conditions_table.php
+│   │   ├── 2024_01_01_000005_create_collateral_types_table.php
+│   │   ├── 2024_01_01_000006_create_collateral_type_translations_table.php
+│   │   ├── 2024_01_01_000007_create_pages_table.php
+│   │   ├── 2024_01_01_000008_create_page_translations_table.php
+│   │   ├── 2024_01_01_000009_create_slideshows_table.php
+│   │   ├── 2024_01_01_000010_create_slideshow_translations_table.php
+│   │   ├── 2024_01_01_000011_create_blog_categories_table.php
+│   │   ├── 2024_01_01_000012_create_blog_category_translations_table.php
+│   │   ├── 2024_01_01_000013_create_blog_posts_table.php
+│   │   ├── 2024_01_01_000014_create_blog_post_translations_table.php
+│   │   ├── 2024_01_01_000015_create_job_positions_table.php
+│   │   ├── 2024_01_01_000016_create_job_position_translations_table.php
+│   │   ├── 2024_01_01_000017_create_job_applications_table.php
+│   │   ├── 2024_01_01_000018_create_complaints_table.php
+│   │   ├── 2024_01_01_000019_create_complaint_responses_table.php
+│   │   └── 2024_01_01_000020_create_contact_messages_table.php
+│   └── seeders/
+│       ├── LanguageSeeder.php
+│       ├── LoanTypeSeeder.php
+│       └── PageSeeder.php
+├── resources/
+│   ├── views/
+│   │   ├── layouts/
+│   │   │   ├── app.blade.php
+│   │   │   ├── admin.blade.php
+│   │   │   └── partials/
+│   │   │       ├── navbar.blade.php
+│   │   │       ├── footer.blade.php
+│   │   │       └── language-switcher.blade.php
+│   │   ├── frontend/
+│   │   │   ├── home.blade.php
+│   │   │   ├── about.blade.php
+│   │   │   ├── services/
+│   │   │   │   ├── index.blade.php
+│   │   │   │   └── show.blade.php
+│   │   │   ├── blog/
+│   │   │   │   ├── index.blade.php
+│   │   │   │   └── show.blade.php
+│   │   │   ├── career/
+│   │   │   │   ├── index.blade.php
+│   │   │   │   └── show.blade.php
+│   │   │   ├── contact.blade.php
+│   │   │   └── complaint.blade.php
+│   │   └── admin/
+│   │       ├── dashboard.blade.php
+│   │       ├── loan-types/
+│   │       ├── blogs/
+│   │       ├── jobs/
+│   │       ├── complaints/
+│   │       └── slideshows/
+│   ├── lang/
+│   │   ├── en/
+│   │   │   ├── messages.php
+│   │   │   ├── services.php
+│   │   │   └── validation.php
+│   │   └── km/
+│   │       ├── messages.php
+│   │       ├── services.php
+│   │       └── validation.php
+│   ├── css/
+│   │   └── app.css
+│   └── js/
+│       ├── app.js
+│       └── bootstrap.js
+└── public/
+    ├── css/
+    │   └── custom.css
+    ├── js/
+    │   └── custom.js
+    └── uploads/
+        ├── loans/
+        ├── blogs/
+        ├── jobs/
+        └── slideshows/
