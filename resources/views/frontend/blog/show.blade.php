@@ -144,7 +144,7 @@
                                             {{ $related->published_at->format('M d, Y') }}
                                         </small>
                                         <a href="{{ route('blog.show', $related->slug) }}" class="btn btn-sm btn-outline-primary">
-                                            Read More
+                                            {{ __('messages.read_more') }}
                                         </a>
                                     </div>
                                 </div>

@@ -12,27 +12,41 @@ class LoanTypeSeeder extends Seeder
 {
     public function run()
     {
-        $enLang = Language::where('code', 'en')->first();
-        $kmLang = Language::where('code', 'km')->first();
+        // Ensure languages exist beforehand (en, km) [best practice]
+        $en = Language::where('code', 'en')->firstOrFail(); // throws if missing [web:6]
+        $km = Language::where('code', 'km')->firstOrFail(); // throws if missing [web:6]
 
-        $loanTypes = [
+        $items = [
+            // 1) Agriculture Loan
             [
                 'slug' => 'agriculture-loan',
                 'icon' => 'fas fa-seedling',
-                'order' => 1,
+                'order' => 5,
                 'translations' => [
                     'en' => [
                         'title' => 'Agriculture Loan',
-                        'description' => 'Financial support for agricultural activities, farming operations, crop cultivation, and livestock management.',
-                        'conditions' => "Currency: Riel or US Dollar\nLoan Amount: Up to $50,000\nDuration: Up to 8 years (96 months)\nAge Requirement: 18-65 years\nDebt Ratio: Not exceeding 70%",
-                        'collateral_info' => 'Soft title or hard title, Vehicle registration card, Other negotiable assets, Guarantor group'
+                        'description' => 'Power your farm cycle with financing for seeds, fertilizer, irrigation, livestock, equipment, and seasonal cash flow smoothing tailored to harvest timelines.', // enriched [web:6][web:3]
+                        'conditions' =>
+                            "Currency: Riel or US Dollar\n" .
+                            "Loan Amount: Up to $50,000 (example: inputs, pumps, greenhouse, feed)\n" .
+                            "Duration: Up to 8 years (96 months), with grace options aligned to crop seasons\n" .
+                            "Eligibility: Farmers, cooperatives, agri‑SMEs with simple income proof\n" .
+                            "Debt Ratio: ≤ 70% and stable repayment history\n" .
+                            "Documents: National ID, farm proof (photos/leases), simple cashbook or buyer receipts",
+                        'collateral_info' => 'Soft/hard title, vehicle registration, agri equipment, or guarantor/group acceptable as alternative security',
                     ],
                     'km' => [
                         'title' => 'ឥណទានកសិកម្ម',
-                        'description' => 'ការគាំទ្រហិរញ្ញវត្ថុសម្រាប់សកម្មភាពកសិកម្ម ការដាំដុះ និងការចិញ្ចឹមសត្វ។',
-                        'conditions' => "ប្រភេទរូបិយប័ណ្ណ៖ ប្រាក់រៀល ឬដុល្លារអាមេរិក\nទំហំឥណទាន៖ រហូតដល់ ៥០,០០០ ដុល្លារអាមេរិក\nរយៈពេលខ្ចីប្រាក់៖ រហូតដល់ ៨ឆ្នាំ ឬ ៩៦ខែ\nអាយុ៖ ១៨ ដល់ ៦៥ ឆ្នាំ\nសមត្ថភាពសង៖ មិនលើសពី ៧០%",
-                        'collateral_info' => 'ប្លង់ទន់ ឬ ប្លង់រឹង, កាតគ្រីម៉ូតូ/ឡាន, ទ្រព្យបញ្ចាំផ្សេងទៀត, ក្រុមធានា'
-                    ]
+                        'description' => 'បន្ថែមកម្លាំងដល់វដ្តកសិកម្មរបស់អ្នក សម្រាប់ពូជ ប៉ូស្វាត ប្រព័ន្ធស្រោចស្រព ចិញ្ចឹមសត្វ ឧបករណ៍ និងគ្រប់គ្រងលំហូរសាច់ប្រាក់តាមរដូវកាល។', // enriched [web:10][web:6]
+                        'conditions' =>
+                            "រូបិយប័ណ្ណ៖ រៀល ឬ ដុល្លារ\n" .
+                            "ទំហំឥណទាន៖ រហូតដល់ 50,000 ដុល្លារ (ឧ. បរិច្ឆេទ កប់ម៉ូទ័រស្រោច សួនកញ្ចក់ អាហារសត្វ)\n" .
+                            "រយៈពេល៖ រហូតដល់ 8 ឆ្នាំ (96 ខែ) អាចផ្តល់ពេលអនុគ្រោះតាមរដូវដាំ/ចម្រាញ់\n" .
+                            "លក្ខខណ្ឌ៖ កសិករ សហកសិករ អាជីវកម្មកសិកម្ម មានភស្តុតាងចំណូលសាមញ្ញ\n" .
+                            "សមត្ថភាពសង៖ មិនលើស 70% និងប្រវត្តិសងល្អ\n" .
+                            "ឯកសារ៖ អត្តសញ្ញាណប័ណ្ណ ភស្តុតាងកសិដ្ឋាន (រូបថត/កិច្ចសន្យា) សៀវភៅសាច់ប្រាក់ ឬ វិក័យប័ត្រអ្នកទិញ",
+                        'collateral_info' => 'ប្លង់ទន់/ប្លង់រឹង កាតគ្រីយានយន្ត ឧបករណ៍កសិកម្ម ឬ អ្នកធានា/ក្រុមធានា ជាជម្រើសធានា',
+                    ],
                 ],
                 'condition' => [
                     'currency_type' => 'Both',
@@ -41,26 +55,40 @@ class LoanTypeSeeder extends Seeder
                     'max_duration_months' => 96,
                     'min_age' => 18,
                     'max_age' => 65,
-                    'max_debt_ratio' => 70.00
-                ]
+                    'max_debt_ratio' => 70.00,
+                ],
             ],
+
+            // 2) Business Loan
             [
                 'slug' => 'business-loan',
                 'icon' => 'fas fa-briefcase',
-                'order' => 2,
+                'order' => 4,
                 'translations' => [
                     'en' => [
                         'title' => 'Business Loan',
-                        'description' => 'Loans for commercial activities, trading operations, import-export business, retail stores, and manufacturing enterprises.',
-                        'conditions' => "Currency: Riel or US Dollar\nLoan Amount: Up to $50,000\nDuration: Up to 8 years (96 months)\nAge Requirement: 18-65 years\nNot harmful to society and environment\nGood credit history",
-                        'collateral_info' => 'Business assets, Property titles, Vehicle registration, Equipment, Guarantor group'
+                        'description' => 'Fuel SME growth with working capital, inventory top‑ups, equipment purchases, cash‑cycle bridging, and branch expansion for trade, retail, import/export, and services.', // enriched [web:6][web:3]
+                        'conditions' =>
+                            "Currency: Riel or US Dollar\n" .
+                            "Amount: Up to $50,000 (stocking, POS, cold‑chain, fit‑out)\n" .
+                            "Term: Up to 8 years (96 months), monthly or flexible repayment\n" .
+                            "Eligibility: Valid business proof (license, invoices, or bank statements)\n" .
+                            "Credit: Good standing and no serious delinquencies\n" .
+                            "Documents: ID, business docs, 6–12 months bank statements or cashbook",
+                        'collateral_info' => 'Business assets, property titles, vehicle registration, equipment, or guarantor group as needed',
                     ],
                     'km' => [
                         'title' => 'ឥណទានអាជីវកម្ម',
-                        'description' => 'ឥណទានអាជីវកម្ម គឺសំដៅលើប្រភេទឥណទានទាំងឡាយណាដែលត្រូវបានយកទៅប្រើប្រាស់ក្នុងសកម្មភាពដូចជា៖ សកម្មភាពអាជីវកម្ម ឬពាណិជ្ជកម្ម ឬជំនួញ មានន័យថាអតិថិជនបានស្នើសុំឥណទានដើម្បីប្រើប្រាស់ក្នុងគោលបំណងធ្វើអាជីវកម្ម ឬពាណិជ្ជកម្ម ឬជំនួញដែលអាចរកចំណូលបានមកពីការនាំចេញ នាំចូល ទិញចូល លក់ចេញ បើកហាងលក់ដូរទំនិញដើម្បីបានប្រាក់ចំណេញឬការទិញសម្ភារៈផ្សេងៗសម្រាប់ផ្គត់ផ្គង់លើអាជីវកម្មបែបជំនួញរបស់ខ្លួនដូចជា៖ ការទិញលក់គ្រឿងទេស គ្រឿងសំណង់ គ្រឿងឧបភោគ បន្លែ ត្រីសាច់ នំចំណី កសិផល ការទិញលក់គ្រឿងអលង្ការ ប្តូរប្រាក់ ការទិញលក់តូប ទីតាំងសម្រាប់លក់ដូរទំនិញ ការទិញលក់គ្រឿងម៉ាស៊ីន គ្រឿងចក្រ គ្រឿងអេឡិចត្រូនិច ការទិញលក់ឡាន ទិញលក់ម៉ូតូ ទូរស័ព្ទ កុំព្យូទ័រ ការទិញលក់សត្វពាហនៈ ការម៉ៅចម្ការសម្រាប់យកកសិផលមកលក់ដូរ។',
-                        'conditions' => "ប្រភេទរូបិយប័ណ្ណ៖ ប្រាក់រៀល ឬដុល្លារអាមេរិក\nទំហំឥណទាន៖ រហូតដល់ ៥០,០០០ ដុល្លារអាមេរិក\nរយៈពេលខ្ចីប្រាក់៖ រហូតដល់ ៨ឆ្នាំ ឬ ៩៦ខែ\nអ្នកខ្ចីត្រូវមានអាយុចាប់ពី ១៨ ដល់ ៦៥ ឆ្នាំ\nមិនមែនជាអាជីវកម្មដែលបង្កគ្រោះថ្នាក់ដល់សង្គម និងបរិស្ថាន\nមានប្រវត្តិឥណទានល្អ",
-                        'collateral_info' => 'ប្លង់ទន់ ឬ ប្លង់រឹង, កាតគ្រីម៉ូតូ/ឡាន, ទ្រព្យបញ្ចាំផ្សេងទៀត (តាមការចរចា), ក្រុមធានា'
-                    ]
+                        'description' => 'ជំរុញកំណើន SME ដោយបំពេញមូលធនបណ្តោះអាសន្ន ទំនិញស្តុក ឧបករណ៍ ការឆ្លើយតបទៅលំហូរសាច់ប្រាក់ និងពង្រីកសាខា សម្រាប់ពាណិជ្ជកម្ម ឡេឡុង នាំចូល/នាំចេញ និងសេវាកម្ម។',
+                        'conditions' =>
+                            "រូបិយប័ណ្ណ៖ រៀល ឬ ដុល្លារ\n" .
+                            "ទំហំ៖ រហូតដល់ 50,000 ដុល្លារ (ស្តុក POS ត្រជാക്കងូត ការតុបតែងសាខា)\n" .
+                            "រយៈពេល៖ រហូតដល់ 8 ឆ្នាំ (96 ខែ) បង់ប្រចាំខែ ឬ បត់បែន\n" .
+                            "លក្ខខណ្ឌ៖ មានភស្តុតាងអាជីវកម្ម (អាជ្ញាប័ណ្ណ វិក័យប័ត្រ ឬ របាយការណ៍ធនាគារ)\n" .
+                            "ឥណទាន៖ ប្រវត្តិល្អ គ្មានបំណុលខកខានធ្ងន់ធ្ងរ\n" .
+                            "ឯកសារ៖ អត្តសញ្ញាណប័ណ្ណ ឯកសារអាជីវកម្ម របាយការណ៍ធនាគារ 6–12 ខែ ឬ សៀវភៅសាច់ប្រាក់",
+                        'collateral_info' => 'ទ្រព្យសម្បត្តិអាជីវកម្ម ប្លង់កាន់កម្មសិទ្ធិ កាតគ្រីយានយន្ត ឧបករណ៍ ឬ ក្រុមអ្នកធានា តាមតម្រូវការ',
+                    ],
                 ],
                 'condition' => [
                     'currency_type' => 'Both',
@@ -69,26 +97,40 @@ class LoanTypeSeeder extends Seeder
                     'max_duration_months' => 96,
                     'min_age' => 18,
                     'max_age' => 65,
-                    'max_debt_ratio' => 70.00
-                ]
+                    'max_debt_ratio' => 70.00,
+                ],
             ],
+
+            // 3) Construction Loan
             [
                 'slug' => 'construction-loan',
                 'icon' => 'fas fa-building',
-                'order' => 3,
+                'order' => 8,
                 'translations' => [
                     'en' => [
                         'title' => 'Construction Loan',
-                        'description' => 'Financing for building construction, home renovation, property development, and infrastructure projects.',
-                        'conditions' => "Currency: Riel or US Dollar\nLoan Amount: Up to $50,000\nDuration: Up to 8 years\nAge: 18-65 years\nConstruction permits required\nProperty documentation",
-                        'collateral_info' => 'Land title, Construction plans, Property under construction, Other assets'
+                        'description' => 'Finance ground‑up builds, home renovations, property development, and small infrastructure with stage‑based disbursements and documentation support.', // enriched [web:6][web:3]
+                        'conditions' =>
+                            "Currency: Riel or US Dollar\n" .
+                            "Amount: Up to $50,000 (materials, contractors, permits)\n" .
+                            "Term: Up to 8 years (96 months) with phased drawdowns\n" .
+                            "Eligibility: Owner/developer with clear plan and cost estimates\n" .
+                            "Requirements: Building permit and property documents\n" .
+                            "Disbursement: Tranches upon milestone verification",
+                        'collateral_info' => 'Land title, construction plan, property under construction, or other acceptable assets',
                     ],
                     'km' => [
                         'title' => 'ឥណទានសំណង់',
-                        'description' => 'ហិរញ្ញប្បទានសម្រាប់សាងសង់អគារ ជួសជុលផ្ទះ អភិវឌ្ឍន៍អចលនទ្រព្យ និងគម្រោងហេដ្ឋារចនាសម្ព័ន្ធ។',
-                        'conditions' => "ប្រភេទរូបិយប័ណ្ណ៖ ប្រាក់រៀល ឬដុល្លារអាមេរិក\nទំហំឥណទាន៖ រហូតដល់ ៥០,០០០ ដុល្លារ\nរយៈពេល៖ ៨ឆ្នាំ\nអាយុ៖ ១៨-៦៥ ឆ្នាំ\nត្រូវមានលិខិតអនុញ្ញាតសាងសង់\nឯកសារទ្រព្យសម្បត្តិ",
-                        'collateral_info' => 'ប្លង់ដី, គម្រោងសំណង់, អចលនទ្រព្យកំពុងសាងសង់, ទ្រព្យបញ្ចាំផ្សេង'
-                    ]
+                        'description' => 'ហិរញ្ញប្បទានសម្រាប់សាងសង់ថ្មី ជួសជុលផ្ទះ អភិវឌ្ឍអចលនទ្រព្យ និងគម្រោងហេដ្ឋារចនាសម្ព័ន្ធតូចៗ ជាមួយការចែកចាយទឹកប្រាក់ជាដំណាក់កាល។',
+                        'conditions' =>
+                            "រូបិយប័ណ្ណ៖ រៀល ឬ ដុល្លារ\n" .
+                            "ទំហំ៖ រហូតដល់ 50,000 ដុល្លារ (សម្ភារៈ ក្រុមហ៊ុនសាងសង់ អនុញ្ញាត)\n" .
+                            "រយៈពេល៖ រហូតដល់ 8 ឆ្នាំ (96 ខែ) ចែកចាយតាមដំណាក់កាល\n" .
+                            "លក្ខខណ្ឌ៖ ម្ចាស់/អ្នកអភិវឌ្ឍ មានផែនការ និងប៉ាន់ស្មានតម្លៃច្បាស់លាស់\n" .
+                            "តម្រូវការ៖ លិខិតអនុញ្ញាតសាងសង់ និងឯកសារអចលនទ្រព្យ\n" .
+                            "ចេញប្រាក់៖ តាមកំណត់គោលដៅ និងការផ្ទៀងផ្ទាត់",
+                        'collateral_info' => 'ប្លង់ដី គម្រោងសំណង់ អចលនទ្រព្យកំពុងសាងសង់ ឬ ទ្រព្យបញ្ចាំផ្សេងៗ',
+                    ],
                 ],
                 'condition' => [
                     'currency_type' => 'Both',
@@ -97,26 +139,40 @@ class LoanTypeSeeder extends Seeder
                     'max_duration_months' => 96,
                     'min_age' => 18,
                     'max_age' => 65,
-                    'max_debt_ratio' => 70.00
-                ]
+                    'max_debt_ratio' => 70.00,
+                ],
             ],
+
+            // 4) Vehicle Loan
             [
                 'slug' => 'vehicle-loan',
                 'icon' => 'fas fa-car',
-                'order' => 4,
+                'order' => 3,
                 'translations' => [
                     'en' => [
                         'title' => 'Vehicle Loan',
-                        'description' => 'Auto loans for purchasing cars, motorcycles, trucks, and commercial vehicles with flexible repayment terms.',
-                        'conditions' => "Currency: US Dollar or Riel\nAmount: Up to $50,000\nTerm: Up to 5 years\nDown payment: 10-30%\nAge: 18-65 years",
-                        'collateral_info' => 'Vehicle registration card, Vehicle insurance, Guarantor (if required)'
+                        'description' => 'Drive sooner with financing for new/used cars, motorbikes, trucks, and commercial vehicles, plus flexible down payments and terms.', // enriched [web:6][web:3]
+                        'conditions' =>
+                            "Currency: Riel or US Dollar\n" .
+                            "Amount: Up to $50,000\n" .
+                            "Term: Up to 5 years (60 months)\n" .
+                            "Down payment: 10–30% depending on vehicle age/condition\n" .
+                            "Eligibility: 18–65 years, stable income and valid ID\n" .
+                            "Insurance: Comprehensive recommended",
+                        'collateral_info' => 'Vehicle registration, insurance policy, and guarantor if required by assessment',
                     ],
                     'km' => [
                         'title' => 'ឥណទានយានជំនិះ',
-                        'description' => 'ឥណទានរថយន្តសម្រាប់ការទិញរថយន្ត ម៉ូតូ ឡានដឹកទំនិញ និងយានជំនិះពាណិជ្ជកម្ម ជាមួយនឹងលក្ខខណ្ឌសង់មានភាពបត់បែន។',
-                        'conditions' => "រូបិយប័ណ្ណ៖ ដុល្លារ ឬរៀល\nទំហំ៖ ដល់ ៥០,០០០ដុល្លារ\nរយៈពេល៖ ៥ឆ្នាំ\nប្រាក់កក់៖ ១០-៣០%\nអាយុ៖ ១៨-៦៥ឆ្នាំ",
-                        'collateral_info' => 'កាតគ្រីយានជំនិះ, ធានារ៉ាប់រងយានជំនិះ, អ្នកធានា (បើចាំបាច់)'
-                    ]
+                        'description' => 'ទិញយានជំនិះថ្មី ឬប្រើរួច រថយន្ត ម៉ូតូ ឡានដឹកទំនិញ និងយានជំនិះពាណិជ្ជកម្ម ជាមួយលក្ខខណ្ឌបត់បែន និងប្រាក់កក់សមរម្យ។',
+                        'conditions' =>
+                            "រូបិយប័ណ្ណ៖ រៀល ឬ ដុល្លារ\n" .
+                            "ទំហំ៖ រហូតដល់ 50,000 ដុល្លារ\n" .
+                            "រយៈពេល៖ រហូតដល់ 5 ឆ្នាំ (60 ខែ)\n" .
+                            "ប្រាក់កក់៖ 10–30% អាស្រ័យលើអាយុ/ស្ថានភាពយានជំនិះ\n" .
+                            "លក្ខខណ្ឌ៖ អាយុ 18–65 ឆ្នាំ ប្រាក់ចំណូលមានស្ថេរភាព និងអត្តសញ្ញាណប័ណ្ណត្រឹមត្រូវ\n" .
+                            "ធានារ៉ាប់រង៖ ផ្ដល់អនុសាសន៍ឲ្យមាន",
+                        'collateral_info' => 'កាតគ្រីយានជំនិះ វិញ្ញាបនប័ត្រធានារ៉ាប់រង និង អ្នកធានា (បើត្រូវការ)',
+                    ],
                 ],
                 'condition' => [
                     'currency_type' => 'Both',
@@ -125,26 +181,40 @@ class LoanTypeSeeder extends Seeder
                     'max_duration_months' => 60,
                     'min_age' => 18,
                     'max_age' => 65,
-                    'max_debt_ratio' => 70.00
-                ]
+                    'max_debt_ratio' => 70.00,
+                ],
             ],
+
+            // 5) Real Estate Mortgage Loan
             [
                 'slug' => 'realestate-mortgage-loan',
                 'icon' => 'fas fa-home',
-                'order' => 5,
+                'order' => 9,
                 'translations' => [
                     'en' => [
                         'title' => 'Real Estate Mortgage Loan',
-                        'description' => 'Home mortgage loans for purchasing residential or commercial properties with competitive interest rates.',
-                        'conditions' => "Currency: US Dollar\nAmount: Up to $200,000\nTerm: Up to 20 years\nDown payment: 20-30%\nProperty appraisal required",
-                        'collateral_info' => 'Property hard title, Land ownership certificate, Property valuation report'
+                        'description' => 'Purchase or refinance residential/commercial properties with long terms, competitive rates, and professional appraisal support.', // enriched [web:3][web:6]
+                        'conditions' =>
+                            "Currency: US Dollar\n" .
+                            "Amount: Up to $200,000\n" .
+                            "Term: Up to 20 years (240 months)\n" .
+                            "Down payment: 20–30%\n" .
+                            "Eligibility: Clear ownership and stable income\n" .
+                            "Appraisal: Independent valuation required",
+                        'collateral_info' => 'Hard title, ownership certificate, and valuation report',
                     ],
                     'km' => [
                         'title' => 'ឥណទានបញ្ចាំអចលនទ្រព្យ',
-                        'description' => 'ឥណទានបញ្ចាំផ្ទះសម្រាប់ទិញអចលនទ្រព្យលំនៅឋាន ឬពាណិជ្ជកម្ម ជាមួយនឹងអត្រាការប្រាក់ប្រកួតប្រជែង។',
-                        'conditions' => "រូបិយប័ណ្ណ៖ ដុល្លារ\nទំហំ៖ ដល់ ២០០,០០០ដុល្លារ\nរយៈពេល៖ ២០ឆ្នាំ\nប្រាក់កក់៖ ២០-៣០%\nត្រូវការវាយតម្លៃអចលនទ្រព្យ",
-                        'collateral_info' => 'ប្លង់រឹង, លិខិតកម្មសិទ្ធិដី, របាយការណ៍វាយតម្លៃអចលនទ្រព្យ'
-                    ]
+                        'description' => 'ទិញ ឬប្ដូរឥណទានអចលនទ្រព្យលំនៅឋាន/ពាណិជ្ជកម្ម ជាមួយរយៈពេលវែង អត្រាការប្រាក់ប្រកួតប្រជែង និងរបាយការណ៍វាយតម្លៃវិជ្ជាជីវៈ។',
+                        'conditions' =>
+                            "រូបិយប័ណ្ណ៖ ដុល្លារ\n" .
+                            "ទំហំ៖ រហូតដល់ 200,000 ដុល្លារ\n" .
+                            "រយៈពេល៖ រហូតដល់ 20 ឆ្នាំ (240 ខែ)\n" .
+                            "ប្រាក់កក់៖ 20–30%\n" .
+                            "លក្ខខណ្ឌ៖ កម្មសិទ្ធិស្អាត និងចំណូលមានស្ថេរភាព\n" .
+                            "វាយតម្លៃ៖ ត្រូវការវាយតម្លៃដោយអង្គភាពឯករាជ្យ",
+                        'collateral_info' => 'ប្លង់រឹង លិខិតកម្មសិទ្ធិដី និងរបាយការណ៍វាយតម្លៃ',
+                    ],
                 ],
                 'condition' => [
                     'currency_type' => 'USD',
@@ -153,9 +223,53 @@ class LoanTypeSeeder extends Seeder
                     'max_duration_months' => 240,
                     'min_age' => 21,
                     'max_age' => 65,
-                    'max_debt_ratio' => 60.00
-                ]
+                    'max_debt_ratio' => 60.00,
+                ],
             ],
+
+            // 6) Mortgage Loan (explicit)
+            [
+                'slug' => 'mortgage-loan',
+                'icon' => 'fas fa-home',
+                'order' => 2,
+                'translations' => [
+                    'en' => [
+                        'title' => 'Mortgage Loan',
+                        'description' => 'Home mortgages for buying primary homes, investment units, or shophouses, with expert guidance through the process.', // enriched [web:3][web:6]
+                        'conditions' =>
+                            "Currency: US Dollar\n" .
+                            "Amount: Up to $200,000\n" .
+                            "Term: Up to 20 years (240 months)\n" .
+                            "Down payment: 20–30%\n" .
+                            "Income: Debt‑to‑income capped at policy threshold\n" .
+                            "Processing: Title check, appraisal, and insurance",
+                        'collateral_info' => 'Hard title, ownership certificate, and valuation report',
+                    ],
+                    'km' => [
+                        'title' => 'ឥណទានបញ្ចាំផ្ទះ',
+                        'description' => 'សម្រាប់ទិញផ្ទះលំនៅដ្ឋាន បន្ទប់ជួល ឬផ្ទះប៉ាហាំង ជាមួយការណែនាំវិជ្ជាជីវៈក្នុងដំណើរការទាំងមូល។',
+                        'conditions' =>
+                            "រូបិយប័ណ្ណ៖ ដុល្លារ\n" .
+                            "ទំហំ៖ រហូតដល់ 200,000 ដុល្លារ\n" .
+                            "រយៈពេល៖ រហូតដល់ 20 ឆ្នាំ (240 ខែ)\n" .
+                            "ប្រាក់កក់៖ 20–30%\n" .
+                            "ចំណូល៖ សមាមាត្របំណុល-ចំណូល មិនលើសតាមគោលនយោបាយ\n" .
+                            "ដំណើរការ៖ ពិនិត្យកម្មសិទ្ធិ វាយតម្លៃ និងធានារ៉ាប់រង",
+                        'collateral_info' => 'ប្លង់រឹង លិខិតកម្មសិទ្ធិដី និងរបាយការណ៍វាយតម្លៃ',
+                    ],
+                ],
+                'condition' => [
+                    'currency_type' => 'USD',
+                    'min_amount' => 5000,
+                    'max_amount' => 200000,
+                    'max_duration_months' => 240,
+                    'min_age' => 21,
+                    'max_age' => 65,
+                    'max_debt_ratio' => 60.00,
+                ],
+            ],
+
+            // 7) Education Loan
             [
                 'slug' => 'education-loan',
                 'icon' => 'fas fa-graduation-cap',
@@ -163,16 +277,28 @@ class LoanTypeSeeder extends Seeder
                 'translations' => [
                     'en' => [
                         'title' => 'Education Loan',
-                        'description' => 'Student loans for tuition fees, educational expenses, overseas studies, and vocational training programs.',
-                        'conditions' => "Currency: US Dollar or Riel\nAmount: Up to $30,000\nTerm: Up to 10 years\nAge: 18-60 years\nAdmission letter required",
-                        'collateral_info' => 'Guarantor (parent/guardian), Property title, Salary assignment'
+                        'description' => 'Invest in learning with funding for tuition, fees, study abroad, and vocational programs, with flexible grace during study.', // enriched [web:3][web:6]
+                        'conditions' =>
+                            "Currency: Riel or US Dollar\n" .
+                            "Amount: Up to $30,000\n" .
+                            "Term: Up to 10 years (120 months)\n" .
+                            "Age: 18–60 years\n" .
+                            "Eligibility: Admission letter and basic income/guarantor\n" .
+                            "Repayment: Interest‑only during study (if eligible)",
+                        'collateral_info' => 'Guarantor (parent/guardian), property title, or salary assignment',
                     ],
                     'km' => [
                         'title' => 'ឥណទានអប់រំ',
-                        'description' => 'ឥណទានសិស្សសម្រាប់ថ្លៃសិក្សា ចំណាយអប់រំ ការសិក្សានៅបរទេស និងកម្មវិធីបណ្តុះបណ្តាលវិជ្ជាជីវៈ។',
-                        'conditions' => "រូបិយប័ណ្ណ៖ ដុល្លារ ឬរៀល\nទំហំ៖ ដល់ ៣០,០០០ដុល្លារ\nរយៈពេល៖ ១០ឆ្នាំ\nអាយុ៖ ១៨-៦០ឆ្នាំ\nត្រូវការលិខិតចូលរៀន",
-                        'collateral_info' => 'អ្នកធានា (ឪពុកម្តាយ/អាណាព្យាបាល), ប្លង់ទ្រព្យសម្បត្តិ, ចាត់ចែងប្រាក់ខែ'
-                    ]
+                        'description' => 'វិនិយោគក្នុងការសិក្សា សម្រាប់ថ្លៃសិក្សា ថ្លៃធ្វើឯកសារ សិក្សានៅបរទេស និងការបណ្តុះបណ្តាលវិជ្ជាជីវៈ ជាមួយពេលអនុគ្រោះក្នុងពេលរៀន។',
+                        'conditions' =>
+                            "រូបិយប័ណ្ណ៖ រៀល ឬ ដុល្លារ\n" .
+                            "ទំហំ៖ រហូតដល់ 30,000 ដុល្លារ\n" .
+                            "រយៈពេល៖ រហូតដល់ 10 ឆ្នាំ (120 ខែ)\n" .
+                            "អាយុ៖ 18–60 ឆ្នាំ\n" .
+                            "លក្ខខណ្ឌ៖ លិខិតចូលរៀន និងអ្នកធានា/ចំណូលមូលដ្ឋាន\n" .
+                            "ការបង់៖ អាចបង់ការប្រាក់តែប៉ុណ្ណោះក្នុងពេលរៀន (បើមាន)",
+                        'collateral_info' => 'អ្នកធានា (ឪពុកម្តាយ/អាណាព្យាបាល) ប្លង់ទ្រព្យ ឬ ចាត់ចែងប្រាក់ខែ',
+                    ],
                 ],
                 'condition' => [
                     'currency_type' => 'Both',
@@ -181,9 +307,11 @@ class LoanTypeSeeder extends Seeder
                     'max_duration_months' => 120,
                     'min_age' => 18,
                     'max_age' => 60,
-                    'max_debt_ratio' => 70.00
-                ]
+                    'max_debt_ratio' => 70.00,
+                ],
             ],
+
+            // 8) Fast Loan
             [
                 'slug' => 'fast-loan',
                 'icon' => 'fas fa-bolt',
@@ -191,16 +319,28 @@ class LoanTypeSeeder extends Seeder
                 'translations' => [
                     'en' => [
                         'title' => 'Fast Loan',
-                        'description' => 'Quick approval loans for urgent financial needs with minimal documentation and rapid disbursement.',
-                        'conditions' => "Currency: US Dollar or Riel\nAmount: Up to $5,000\nTerm: Up to 2 years\nAge: 21-65 years\nQuick approval: 24-48 hours",
-                        'collateral_info' => 'ID card, Proof of income, Guarantor'
+                        'description' => 'Get quick approvals for urgent needs with minimal documents and rapid disbursement to handle medical, travel, or emergency expenses.', // enriched [web:6][web:3]
+                        'conditions' =>
+                            "Currency: Riel or US Dollar\n" .
+                            "Amount: Up to $5,000\n" .
+                            "Term: Up to 2 years (24 months)\n" .
+                            "Age: 21–65 years\n" .
+                            "Approval: 24–48 hours for qualified applicants\n" .
+                            "Documents: ID and simple income proof",
+                        'collateral_info' => 'ID, income proof, and guarantor if required by risk review',
                     ],
                     'km' => [
                         'title' => 'ឥណទានរហ័ស',
-                        'description' => 'ឥណទានអនុម័តរហ័សសម្រាប់តម្រូវការហិរញ្ញវត្ថុបន្ទាន់ ជាមួយឯកសារតិចតួច និងការចេញប្រាក់លឿន។',
-                        'conditions' => "រូបិយប័ណ្ណ៖ ដុល្លារ ឬរៀល\nទំហំ៖ ដល់ ៥,០០០ដុល្លារ\nរយៈពេល៖ ២ឆ្នាំ\nអាយុ៖ ២១-៦៥ឆ្នាំ\nអនុម័តលឿន៖ ២៤-៤៨ម៉ោង",
-                        'collateral_info' => 'អត្តសញ្ញាណប័ណ្ណ, បញ្ជាក់ប្រាក់ចំណូល, អ្នកធានា'
-                    ]
+                        'description' => 'អនុម័តលឿនសម្រាប់តម្រូវការបន្ទាន់ ជាមួយឯកសារតិច និងចេញប្រាក់ឆាប់រហ័ស ដើម្បីគ្រប់គ្រងចំណាយបន្ទាន់ៗ។',
+                        'conditions' =>
+                            "រូបិយប័ណ្ណ៖ រៀល ឬ ដុល្លារ\n" .
+                            "ទំហំ៖ រហូតដល់ 5,000 ដុល្លារ\n" .
+                            "រយៈពេល៖ រហូតដល់ 2 ឆ្នាំ (24 ខែ)\n" .
+                            "អាយុ៖ 21–65 ឆ្នាំ\n" .
+                            "អនុម័ត៖ 24–48 ម៉ោង សម្រាប់អ្នកបំពេញលក្ខណៈ\n" .
+                            "ឯកសារ៖ អត្តសញ្ញាណប័ណ្ណ និងភស្តុតាងចំណូលសាមញ្ញ",
+                        'collateral_info' => 'អត្តសញ្ញាណប័ណ្ណ បញ្ជាក់ប្រាក់ចំណូល និង អ្នកធានា តាមការវាយតម្លៃហានិភ័យ',
+                    ],
                 ],
                 'condition' => [
                     'currency_type' => 'Both',
@@ -209,26 +349,40 @@ class LoanTypeSeeder extends Seeder
                     'max_duration_months' => 24,
                     'min_age' => 21,
                     'max_age' => 65,
-                    'max_debt_ratio' => 70.00
-                ]
+                    'max_debt_ratio' => 70.00,
+                ],
             ],
+
+            // 9) Personal Loan
             [
                 'slug' => 'personal-loan',
                 'icon' => 'fas fa-user',
-                'order' => 8,
+                'order' => 1,
                 'translations' => [
                     'en' => [
                         'title' => 'Personal Loan',
-                        'description' => 'Unsecured personal loans for various purposes including weddings, medical expenses, travel, and debt consolidation.',
-                        'conditions' => "Currency: US Dollar or Riel\nAmount: Up to $20,000\nTerm: Up to 5 years\nAge: 21-65 years\nRegular income required",
-                        'collateral_info' => 'Salary certificate, Bank statements, Guarantor, ID documents'
+                        'description' => 'Unsecured financing for weddings, medical care, travel, home upgrades, or debt consolidation with transparent fees and predictable payments.', // enriched [web:6][web:3]
+                        'conditions' =>
+                            "Currency: Riel or US Dollar\n" .
+                            "Amount: Up to $20,000\n" .
+                            "Term: Up to 5 years (60 months)\n" .
+                            "Age: 21–65 years\n" .
+                            "Eligibility: Stable income and acceptable credit profile\n" .
+                            "Documents: Salary certificate, bank statements, ID, and guarantor if needed",
+                        'collateral_info' => 'No collateral required for qualified borrowers; guarantor or proof of income may be requested',
                     ],
                     'km' => [
                         'title' => 'ឥណទានផ្ទាល់ខ្លួន',
-                        'description' => 'ឥណទានផ្ទាល់ខ្លួនគ្មានការធានាសម្រាប់គោលបំណងផ្សេងៗ រួមទាំងពិធីមង្គលការ ចំណាយវេជ្ជសាស្ត្រ ការធ្វើដំណើរ និងការបង្រួបបង្រួមបំណុល។',
-                        'conditions' => "រូបិយប័ណ្ណ៖ ដុល្លារ ឬរៀល\nទំហំ៖ ដល់ ២០,០០០ដុល្លារ\nរយៈពេល៖ ៥ឆ្នាំ\nអាយុ៖ ២១-៦៥ឆ្នាំ\nត្រូវការប្រាក់ចំណូលទៀងទាត់",
-                        'collateral_info' => 'សំបុត្រប្រាក់ខែ, របាយការណ៍ធនាគារ, អ្នកធានា, ឯកសារអត្តសញ្ញាណ'
-                    ]
+                        'description' => 'ឥណទានគ្មានទ្រព្យបញ្ចាំ សម្រាប់មង្គលការ វេជ្ជសាស្ត្រ ដំណើរកំសាន្ត កែលំអផ្ទះ ឬបង្រួបបង្រួមបំណុល ជាមួយថ្លៃសេវាផ្ទាល់ត្រឹមត្រូវ។',
+                        'conditions' =>
+                            "រូបិយប័ណ្ណ៖ រៀល ឬ ដុល្លារ\n" .
+                            "ទំហំ៖ រហូតដល់ 20,000 ដុល്ലារ\n" .
+                            "រយៈពេល៖ រហូតដល់ 5 ឆ្នាំ (60 ខែ)\n" .
+                            "អាយុ៖ 21–65 ឆ្នាំ\n" .
+                            "លក្ខខណ្ឌ៖ ប្រាក់ចំណូលមានស្ថេរភាព និងប្រវត្តិឥណទានទទួលយកបាន\n" .
+                            "ឯកសារ៖ សំបុត្រប្រាក់ខែ របាយការណ៍ធនាគារ អត្តសញ្ញាណប័ណ្ណ និង អ្នកធានា (បើចាំបាច់)",
+                        'collateral_info' => 'មិនត្រូវការទ្រព្យបញ្ចាំសម្រាប់អ្នកដែលមានលក្ខណៈ គ្រាន់តែអាចត្រូវការ អ្នកធានា ឬ ភស្តុតាងចំណូល',
+                    ],
                 ],
                 'condition' => [
                     'currency_type' => 'Both',
@@ -237,38 +391,45 @@ class LoanTypeSeeder extends Seeder
                     'max_duration_months' => 60,
                     'min_age' => 21,
                     'max_age' => 65,
-                    'max_debt_ratio' => 70.00
-                ]
-            ]
+                    'max_debt_ratio' => 70.00,
+                ],
+            ],
         ];
 
-        foreach ($loanTypes as $data) {
-            $loanType = LoanType::create([
-                'slug' => $data['slug'],
-                'icon' => $data['icon'],
-                'order' => $data['order'],
-                'status' => 'active'
-            ]);
+        foreach ($items as $item) {
+            // Upsert LoanType (idempotent) [web:6]
+            $loanType = LoanType::updateOrCreate(
+                ['slug' => $item['slug']],
+                [
+                    'icon' => $item['icon'],
+                    'order' => $item['order'],
+                    'status' => 'active',
+                ]
+            );
 
-            // Create translations
-            foreach ($data['translations'] as $lang => $trans) {
-                $language = $lang == 'en' ? $enLang : $kmLang;
+            // Upsert translations for EN and KM [web:6]
+            foreach (['en' => $en, 'km' => $km] as $code => $langModel) {
+                $t = $item['translations'][$code];
 
-                LoanTypeTranslation::create([
-                    'loan_type_id' => $loanType->id,
-                    'language_id' => $language->id,
-                    'title' => $trans['title'],
-                    'description' => $trans['description'],
-                    'conditions' => $trans['conditions'],
-                    'collateral_info' => $trans['collateral_info'],
-                ]);
+                LoanTypeTranslation::updateOrCreate(
+                    [
+                        'loan_type_id' => $loanType->id,
+                        'language_id' => $langModel->id,
+                    ],
+                    [
+                        'title' => $t['title'],
+                        'description' => $t['description'],
+                        'conditions' => $t['conditions'],
+                        'collateral_info' => $t['collateral_info'],
+                    ]
+                );
             }
 
-            // Create loan condition
-            LoanCondition::create(array_merge(
+            // Upsert conditions [web:6]
+            LoanCondition::updateOrCreate(
                 ['loan_type_id' => $loanType->id],
-                $data['condition']
-            ));
+                $item['condition']
+            );
         }
     }
 }

@@ -27,7 +27,6 @@
     <div class="row">
       <div class="col-lg-8">
 
-        {{-- Big poster above About This Service --}}
         @if($loanType->poster)
         <div class="card shadow-sm mb-4" data-aos="fade-up">
           <div class="service-detail-poster">
@@ -39,7 +38,7 @@
 
         <div class="card shadow-sm mb-4" data-aos="fade-up">
           <div class="card-body">
-            <h3 class="card-title mb-4">About This Service</h3>
+            <h3 class="card-title mb-4">{{ __('messages.about_this_service') }}</h3>
             <div class="service-description">
               {!! nl2br(e($loanType->translation()?->description)) !!}
             </div>
@@ -49,15 +48,24 @@
         @if($loanType->conditions)
         <div class="card shadow-sm mb-4" data-aos="fade-up" data-aos-delay="100">
           <div class="card-body">
-            <h3 class="card-title mb-4">Conditions</h3>
+            <h3 class="card-title mb-4">{{ __('messages.conditions') }}</h3>
             <div class="row">
               <div class="col-md-6">
-                <p><strong>Currency Type:</strong> {{ $loanType->conditions->currency_type }}</p>
-                <p><strong>Loan Amount:</strong> ${{ number_format($loanType->conditions->min_amount) }} - ${{ number_format($loanType->conditions->max_amount) }}</p>
+                <p><strong>{{ __('messages.currency_type') }}:</strong> {{ $loanType->conditions->currency_type }}</p>
+                <p>
+                  <strong>{{ __('messages.loan_amount') }}:</strong>
+                  ${{ number_format($loanType->conditions->min_amount) }} - ${{ number_format($loanType->conditions->max_amount) }}
+                </p>
               </div>
               <div class="col-md-6">
-                <p><strong>Duration:</strong> Up to {{ $loanType->conditions->max_duration_months }} months</p>
-                <p><strong>Age Requirement:</strong> {{ $loanType->conditions->min_age }} - {{ $loanType->conditions->max_age }} years</p>
+                <p>
+                  <strong>{{ __('messages.duration') }}:</strong>
+                  {{ __('messages.up_to_months', ['months' => $loanType->conditions->max_duration_months]) }}
+                </p>
+                <p>
+                  <strong>{{ __('messages.age_requirement') }}:</strong>
+                  {{ $loanType->conditions->min_age }} - {{ $loanType->conditions->max_age }} {{ __('messages.years') }}
+                </p>
               </div>
             </div>
             @if($loanType->translation()?->conditions)
@@ -73,7 +81,7 @@
         @if($loanType->collateralTypes->count() > 0)
         <div class="card shadow-sm" data-aos="fade-up" data-aos-delay="200">
           <div class="card-body">
-            <h3 class="card-title mb-4">Collateral Types</h3>
+            <h3 class="card-title mb-4">{{ __('messages.collateral_types') }}</h3>
             <ul class="list-unstyled">
               @foreach($loanType->collateralTypes as $collateral)
               <li class="mb-2">
@@ -90,8 +98,8 @@
       <div class="col-lg-4">
         <div class="card shadow-sm sticky-top" style="top: 100px;" data-aos="fade-left">
           <div class="card-body text-center">
-            <h4 class="card-title mb-4">Ready to Apply?</h4>
-            <p class="text-muted">Get started with your loan application today</p>
+            <h4 class="card-title mb-4">{{ __('messages.ready_to_apply') }}</h4>
+            <p class="text-muted">{{ __('messages.get_started_today') }}</p>
             <a href="{{ route('contact') }}" class="btn btn-primary btn-lg w-100 mb-3">
               {{ __('messages.apply_now') }}
             </a>
@@ -101,6 +109,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
@@ -108,11 +117,10 @@
 
 @push('styles')
 <style>
-/* Square big poster on service detail page */
 .service-detail-poster{
   position: relative;
   width: 100%;
-  padding-top: 100%;          /* 1:1 aspect ratio */
+  padding-top: 100%;
   overflow: hidden;
   border-top-left-radius: .5rem;
   border-top-right-radius: .5rem;

@@ -52,7 +52,7 @@
                                 </p>
 
                                 <a href="{{ route('blog.show', $post->slug) }}" class="btn btn-outline-primary btn-sm">
-                                    Read More <i class="fas fa-arrow-right ms-2"></i>
+                                    {{ __('messages.read_more') }}<i class="fas fa-arrow-right ms-2"></i>
                                 </a>
                             </div>
                         </article>

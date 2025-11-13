@@ -73,7 +73,7 @@
 
                         <div class="d-flex justify-content-between align-items-center">
                             <a href="{{ route('career.show', $job->slug) }}" class="btn btn-outline-primary btn-sm">
-                                View Details <i class="fas fa-arrow-right ms-2"></i>
+                                 {{ __('messages.view_details') }}<i class="fas fa-arrow-right ms-2"></i>
                             </a>
                             <span class="text-muted small">
                                 <i class="far fa-calendar-alt me-1"></i> Posted {{ $job->created_at->format('M d, Y') }}
