@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    // After login, go to admin dashboard. Role middleware will handle access.
+    protected $redirectTo = '/admin/dashboard';
+
+    protected function authenticated($request, $user)
+    {
+        return redirect()->intended(route('admin.dashboard'));
+    }
+
     public function showLoginForm()
     {
         if (Auth::check()) {
@@ -19,7 +27,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
@@ -28,14 +36,12 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            if (Auth::user()->is_admin) {
-                return redirect()->intended(route('admin.dashboard'));
-            }
+            // IMPORTANT: remove the is_admin gate below.
+            // Old code caused your banner:
+            // if (Auth::user()->is_admin) { ... } else { logout + error }
 
-            Auth::logout();
-            return back()->withErrors([
-                'email' => 'You do not have admin access.',
-            ]);
+            // New: always go to dashboard; role middleware controls access thereafter.
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         return back()->withErrors([

@@ -46,31 +46,28 @@ Route::get('/complaint', [ContactController::class, 'complaintForm'])->name('com
 Route::post('/complaint', [ContactController::class, 'complaintStore'])->name('complaint.store');
 
 // Admin Routes
-Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+Route::prefix('admin')
+  ->middleware(['auth','role:admin,superadmin,sale,marketing'])
+  ->name('admin.')
+  ->group(function () {
+      Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
-    // Loan Types
-    Route::resource('loan-types', App\Http\Controllers\Admin\LoanTypeController::class);
-    
+      // Customers (for all admitted roles; policy restricts actions)
+      Route::resource('customers', \App\Http\Controllers\Admin\CustomerController::class)->except(['show']);
+      Route::patch('customers/{customer}/complete', [\App\Http\Controllers\Admin\CustomerController::class, 'complete'])->name('customers.complete');
+      Route::post('customers/{customer}/share', [\App\Http\Controllers\Admin\CustomerController::class, 'share'])->name('customers.share');
 
+      // Existing admin resources:
+      Route::resource('loan-types', App\Http\Controllers\Admin\LoanTypeController::class);
+      Route::resource('blogs', App\Http\Controllers\Admin\BlogController::class);
+      Route::resource('jobs', App\Http\Controllers\Admin\JobController::class);
+      Route::get('job-applications', [App\Http\Controllers\Admin\JobController::class, 'applications'])->name('job-applications');
+      Route::patch('job-applications/{application}', [App\Http\Controllers\Admin\JobController::class, 'updateApplicationStatus'])->name('job-applications.update');
+      Route::resource('complaints', App\Http\Controllers\Admin\ComplaintController::class);
+      Route::post('complaints/{complaint}/respond', [App\Http\Controllers\Admin\ComplaintController::class, 'respond'])->name('complaints.respond');
+      Route::resource('slideshows', App\Http\Controllers\Admin\SlideshowController::class);
+      Route::get('messages', [App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('messages.index');
+      Route::patch('messages/{message}/mark-read', [App\Http\Controllers\Admin\ContactMessageController::class, 'markAsRead'])->name('messages.mark-read');
+      Route::delete('messages/{message}', [App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('messages.destroy');
+  });
 
-    // Blog Posts
-    Route::resource('blogs', App\Http\Controllers\Admin\BlogController::class);
-
-    // Job Positions
-    Route::resource('jobs', App\Http\Controllers\Admin\JobController::class);
-    Route::get('job-applications', [App\Http\Controllers\Admin\JobController::class, 'applications'])->name('job-applications');
-    Route::patch('job-applications/{application}', [App\Http\Controllers\Admin\JobController::class, 'updateApplicationStatus'])->name('job-applications.update');
-
-    // Complaints
-    Route::resource('complaints', App\Http\Controllers\Admin\ComplaintController::class);
-    Route::post('complaints/{complaint}/respond', [App\Http\Controllers\Admin\ComplaintController::class, 'respond'])->name('complaints.respond');
-
-    // Slideshows
-    Route::resource('slideshows', App\Http\Controllers\Admin\SlideshowController::class);
-
-    // Contact Messages
-    Route::get('messages', [App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('messages.index');
-    Route::patch('messages/{message}/mark-read', [App\Http\Controllers\Admin\ContactMessageController::class, 'markAsRead'])->name('messages.mark-read');
-    Route::delete('messages/{message}', [App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('messages.destroy');
-});

@@ -42,4 +42,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['admin', 'superadmin']);
+    }
+    public function isSalesOrMarketing(): bool
+    {
+        return in_array($this->role, ['sale', 'marketing']);
+    }
+
 }
