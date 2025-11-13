@@ -28,6 +28,13 @@ class JobController extends Controller
         return view('admin.jobs.create', compact('languages'));
     }
 
+    public function show(JobPosition $job)
+    {
+        $job->load('translations.language', 'applications');
+        return view('admin.jobs.show', compact('job'));
+    }
+
+
     public function store(Request $request)
     {
         $validated = $request->validate([

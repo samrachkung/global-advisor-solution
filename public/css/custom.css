@@ -901,5 +901,53 @@ body {
 .service-title{ color: var(--primary-blue); font-weight: 800; margin-top: .5rem; }
 .service-description{ color: var(--text-light); margin: .5rem 0 1.1rem; }
 
+/* Bigger service cards and posters */
+.service-card-lg {
+  padding: 1.5rem 1.5rem 2rem;
+  border-radius: 24px;
+  max-width: 420px;            /* keeps cards visually bold without over-stretch */
+  margin-inline: auto;
+}
+
+.service-poster-lg {
+  padding-top: 90% !important; /* taller 1:1.11 look for prominence (was 100%) */
+  border-radius: 18px;
+}
+
+.service-poster-lg img {
+  border-radius: 18px;
+}
+
+/* Typography scale up slightly */
+.service-card-lg .service-title {
+  font-size: 1.5rem;           /* was 1.35rem */
+  margin-top: .6rem;
+}
+
+.service-card-lg .service-description {
+  font-size: 1.02rem;
+  line-height: 1.75;
+  max-width: 36ch;             /* improve readability on larger cards */
+  margin-inline: auto;
+}
+
+/* On very large screens, keep 3-per-row and center grid */
+@media (min-width: 1200px) {
+  .services-section .row.g-4 {
+    justify-content: center;
+  }
+}
+
+/* On tablets, keep 2-per-row and larger poster */
+@media (max-width: 991.98px) {
+  .service-card-lg { max-width: 520px; }
+  .service-poster-lg { padding-top: 95% !important; }
+}
+
+/* On mobile, single column but still bold */
+@media (max-width: 575.98px) {
+  .service-card-lg { max-width: 100%; }
+  .service-poster-lg { padding-top: 100% !important; }
+}
 
 

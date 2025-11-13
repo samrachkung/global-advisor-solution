@@ -17,22 +17,19 @@
             <div class="row g-4">
                 @foreach ($loanTypes as $loan)
                     <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
-                        <div class="service-card h-100 text-center overflow-hidden">
+                        <div class="service-card h-100 text-center overflow-hidden service-card-lg">
                             @if ($loan->poster)
-                                <div class="service-poster-hero mb-3">
+                                <div class="service-poster-hero mb-3 service-poster-lg">
                                     <img src="{{ asset('uploads/services/' . $loan->poster) }}"
                                         alt="{{ $loan->translation()?->title }}">
                                 </div>
                             @endif
-
                             <h4 class="service-title">{{ $loan->translation()?->title }}</h4>
                             <p class="service-description">{{ Str::limit($loan->translation()?->description, 150) }}</p>
                             <a href="{{ route('services.show', $loan->slug) }}" class="btn btn-outline-primary">
                                 {{ __('messages.learn_more') }} <i class="fas fa-arrow-right ms-1"></i>
                             </a>
                         </div>
-
-
                     </div>
                 @endforeach
             </div>

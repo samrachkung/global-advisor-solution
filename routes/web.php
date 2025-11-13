@@ -9,6 +9,7 @@ use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Admin\LoanTypeController;
 
 // Authentication Routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -50,6 +51,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
     // Loan Types
     Route::resource('loan-types', App\Http\Controllers\Admin\LoanTypeController::class);
+    
+
 
     // Blog Posts
     Route::resource('blogs', App\Http\Controllers\Admin\BlogController::class);

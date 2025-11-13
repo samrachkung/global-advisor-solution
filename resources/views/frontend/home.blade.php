@@ -89,40 +89,27 @@
 
             <div class="row g-4">
                 @forelse($loanTypes as $loan)
-                    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
-                        <div class="service-card h-100 text-center overflow-hidden">
-
-                            {{-- Poster (visible if present) --}}
+                    <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
+                        <div class="service-card h-100 text-center overflow-hidden service-card-lg">
                             @if (!empty($loan->poster))
-                                <div class="service-poster-hero mb-3">
+                                <div class="service-poster-hero mb-3 service-poster-lg">
                                     <img src="{{ asset('uploads/services/' . $loan->poster) }}"
                                         alt="{{ $loan->translation()?->title }}">
                                 </div>
                             @endif
 
-                            {{-- Optional small icon badge above title (remove this block if you want poster only) --}}
-                            {{-- <div class="service-icon-badge mx-auto mb-2">
-      <i class="{{ $loan->icon ?? 'fas fa-hand-holding-usd' }}"></i>
-    </div> --}}
-
                             <h4 class="service-title">{{ $loan->translation()?->title }}</h4>
-                            <p class="service-description">
-                                {{ Str::limit($loan->translation()?->description, 100) }}
-                            </p>
+                            <p class="service-description">{{ Str::limit($loan->translation()?->description, 120) }}</p>
                             <a href="{{ route('services.show', $loan->slug) }}" class="btn btn-outline-primary">
                                 {{ __('messages.learn_more') }} <i class="fas fa-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
-
                 @empty
-                    <div class="col-12">
-                        <div class="alert alert-info text-center">
-                            <i class="fas fa-info-circle me-2"></i> No services available at the moment.
-                        </div>
-                    </div>
+                    ...
                 @endforelse
             </div>
+
         </div>
     </section>
 @endsection
