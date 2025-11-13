@@ -80,4 +80,5 @@ return [
     'team_sales_bio' => 'Drives partnerships and loan product distribution.',
     'team_risk_mgr' => 'Risk & Compliance Manager',
     'team_risk_bio' => 'Oversees risk, KYC and regulatory compliance.',
+    'both' => 'Riel or Dollar',
 ];

@@ -51,7 +51,7 @@
             <h3 class="card-title mb-4">{{ __('messages.conditions') }}</h3>
             <div class="row">
               <div class="col-md-6">
-                <p><strong>{{ __('messages.currency_type') }}:</strong> {{ $loanType->conditions->currency_type }}</p>
+                <p><strong>{{ __('messages.currency_type') }}:</strong> {{ __('messages.both') }}</p>
                 <p>
                   <strong>{{ __('messages.loan_amount') }}:</strong>
                   ${{ number_format($loanType->conditions->min_amount) }} - ${{ number_format($loanType->conditions->max_amount) }}
