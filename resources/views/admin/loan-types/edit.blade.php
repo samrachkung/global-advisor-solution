@@ -61,7 +61,7 @@
                   </div>
                 </div>
               @endif
-              <small class="text-muted d-block">Recommended 1200×600px, JPG/PNG</small>
+              <small class="text-muted d-block">Recommended 1280×1280px, JPG/PNG (square), up to 3MB</small>
             </div>
 
             <div class="col-md-2 mt-3">

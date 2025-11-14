@@ -30,7 +30,7 @@ class LoanTypeController extends Controller
         $data = $request->validate([
             'slug' => 'required|unique:loan_types,slug',
             'icon' => 'required|string',
-            'poster' => 'nullable|mimes:jpg,jpeg,png,webp|max:3072',
+            'poster' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072|dimensions:min_width=1280,min_height=1280,ratio=1/1',
             'order' => 'required|integer',
             'status' => 'required|in:active,inactive',
             // translations
@@ -113,7 +113,7 @@ class LoanTypeController extends Controller
         $data = $request->validate([
             'slug' => 'required|unique:loan_types,slug,'.$loanType->id,
             'icon' => 'required|string',
-            'poster' => 'nullable|mimes:jpg,jpeg,png,webp|max:3072',
+            'poster' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072|dimensions:min_width=1280,min_height=1280,ratio=1/1',
             'poster_remove' => 'nullable|boolean',
             'order' => 'required|integer',
             'status' => 'required|in:active,inactive',
