@@ -7,6 +7,7 @@ return [
     'blog' => 'Blog',
     'career' => 'Career',
     'contact_us' => 'Contact Us',
+
     'our_services' => 'Our Services',
     'learn_more' => 'Learn More',
     'apply_now' => 'Apply Now',
@@ -14,18 +15,22 @@ return [
     'submit' => 'Submit',
     'send_message' => 'Send Message',
     'message_sent' => 'Your message has been sent successfully!',
+
     'name' => 'Name',
     'email' => 'Email',
     'phone' => 'Phone',
     'subject' => 'Subject',
     'message' => 'Message',
     'address' => 'Address',
+
     'quick_links' => 'Quick Links',
     'contact_info' => 'Contact Information',
+
     'no_posts' => 'No blog posts available',
     'categories' => 'Categories',
     'views' => 'views',
     'related_posts' => 'Related Posts',
+
     'join_our_team' => 'Join Our Team',
     'view_details' => 'View Details',
     'no_openings' => 'No job openings available at the moment',
@@ -38,12 +43,16 @@ return [
     'cover_letter' => 'Cover Letter',
     'submit_application' => 'Submit Application',
     'application_submitted' => 'Your application has been submitted successfully!',
+
+    // Legacy complaint (kept for backward compatibility)
     'customer_complaint' => 'Customer Complaint Form',
     'loan_type' => 'Loan Type',
     'priority' => 'Priority',
     'attachment' => 'Attachment',
     'description' => 'Description',
     'complaint_submitted' => 'Your complaint has been submitted. Reference number:',
+
+    // CTA and service detail
     'explore_services' => 'Explore Services',
     'about_this_service' => 'About This Service',
     'conditions' => 'Conditions',
@@ -56,20 +65,28 @@ return [
     'collateral_types' => 'Collateral Types',
     'ready_to_apply' => 'Ready to Apply?',
     'get_started_today' => 'Get started with your loan application today',
+
+    // About page content
     'who_we_are' => 'Who We Are',
     'about_intro_lead' => 'Global Advisor Solution is a leading financial advisory firm specializing in loan consultation services.',
     'about_intro_p2' => 'We provide comprehensive loan solutions tailored to meet diverse needs, from agriculture and business to personal and educational financing.',
     'about_intro_p3' => 'With years of experience, our team helps you achieve financial goals with transparent, reliable, client-focused services.',
+
+    // Features
     'feature_expert_team_title' => 'Expert Team',
     'feature_expert_team_desc' => 'Experienced financial advisors ready to assist you',
     'feature_trusted_service_title' => 'Trusted Service',
     'feature_trusted_service_desc' => 'Reliable and transparent loan solutions',
     'feature_fast_processing_title' => 'Fast Processing',
     'feature_fast_processing_desc' => 'Quick approval and disbursement process',
+
+    // Stats
     'years_experience' => 'Years Experience',
     'happy_clients' => 'Happy Clients',
     'loan_products' => 'Loan Products',
     'satisfaction_rate' => 'Satisfaction Rate',
+
+    // Team
     'our_team' => 'Our Team',
     'our_team_subtitle' => 'Passionate professionals dedicated to your success',
     'team_ceo' => 'Chief Executive Officer',
@@ -80,5 +97,16 @@ return [
     'team_sales_bio' => 'Drives partnerships and loan product distribution.',
     'team_risk_mgr' => 'Risk & Compliance Manager',
     'team_risk_bio' => 'Oversees risk, KYC and regulatory compliance.',
+
+    // Currency helper
     'both' => 'Riel or Dollar',
+
+    // ========================
+    // New: Quick Contact flow
+    // ========================
+    'quick_contact' => 'Quick Contact',
+    'consultation' => 'Consultation',
+    'consultation_date' => 'Consultation Date',
+    'consultation_time' => 'Consultation Time',
+    'select' => 'Select',
 ];
