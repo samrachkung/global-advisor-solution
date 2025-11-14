@@ -32,11 +32,10 @@ class CustomerController extends Controller
 
     public function create()
     {
-        Gate::authorize('create', Customer::class);
+        \Illuminate\Support\Facades\Gate::authorize('create', Customer::class);
         $loanTypes = LoanType::where('status', 'active')->orderBy('order')->get();
         return view('admin.customers.create', compact('loanTypes'));
     }
-
     public function store(Request $request)
     {
         Gate::authorize('create', Customer::class);
@@ -51,14 +50,23 @@ class CustomerController extends Controller
             'consultation_fee' => 'nullable|numeric|min:0',
             'consultation_date' => 'nullable|date',
             'consultation_time' => 'nullable|date_format:H:i',
-            'status' => 'required|in:draft,complete',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx|max:5120',
+            'action' => 'required|in:save,save_draft', // coming from submit buttons
         ]);
 
+        $data['status'] = $data['action'] === 'save_draft' ? 'draft' : 'complete';
+        unset($data['action']);
+
         $data['owner_id'] = auth()->id();
+        $data['created_by'] = auth()->id();
+
+        if ($request->hasFile('attachment')) {
+            $data['attachment'] = $request->file('attachment')->store('customers', 'public');
+        }
 
         $customer = Customer::create($data);
 
-        return redirect()->route('admin.customers.index')->with('success', 'Customer saved.');
+        return redirect()->route('admin.customers.index')->with('success', $customer->status === 'draft' ? 'Customer saved as draft.' : 'Customer saved.');
     }
 
     public function edit(Customer $customer)
@@ -82,8 +90,21 @@ class CustomerController extends Controller
             'consultation_fee' => 'nullable|numeric|min:0',
             'consultation_date' => 'nullable|date',
             'consultation_time' => 'nullable|date_format:H:i',
-            'status' => 'required|in:draft,complete',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx|max:5120',
+            'action' => 'nullable|in:save,save_draft', // only used in edit if you keep both buttons
         ]);
+
+        if ($request->has('action')) {
+            $data['status'] = $data['action'] === 'save_draft' ? 'draft' : 'complete';
+        }
+        unset($data['action']);
+
+        if ($request->hasFile('attachment')) {
+            // optional: delete old file
+            if ($customer->attachment)
+                \Storage::disk('public')->delete($customer->attachment);
+            $data['attachment'] = $request->file('attachment')->store('customers', 'public');
+        }
 
         $customer->update($data);
 
@@ -113,9 +134,11 @@ class CustomerController extends Controller
         if (!$botToken || !$chatId) {
             return back()->with('error', 'Telegram is not configured.');
         }
-
         if ($customer->shared_to_telegram) {
             return back()->with('info', 'Already shared to Telegram.');
+        }
+        if ($customer->status === 'draft') {
+            return back()->with('error', 'Cannot share draft. Please complete it first.');
         }
 
         $loanTitle = optional($customer->loanType)->translation()?->title ?? 'មិនមាន';
@@ -126,37 +149,94 @@ class CustomerController extends Controller
 
         $escape = fn($t) => str_replace(['&', '<', '>'], ['&amp;', '&lt;', '&gt;'], (string) $t);
 
-        $text = "👥 <b>ពត៌មានបឋមអតិថិជន</b>\n\n";
-        $text .= "👤 <b>អតិថិជនឈ្មោះ៖</b> " . $escape($customer->customer_name) . "\n";
-        $text .= "📧 <b>អ៊ីមែល៖</b> " . $escape($customer->email ?? 'មិនមាន') . "\n";
-        $text .= "📞 <b>ទូរស័ព្ទ៖</b> " . $escape($customer->phone_number ?? 'មិនមាន') . "\n";
-        $text .= "💼 <b>ប្រភេទកម្ចី៖</b> " . $escape($loanTitle) . "\n";
-        $text .= "💵 <b>ទំហំកម្ចី៖</b> " . $loanAmount . "\n";
-        $text .= "🗂️ <b>ប្រឹក្សា៖</b> " . $escape($customer->consultation ?? 'មិនមាន') . "\n";
-        $text .= "💳 <b>តម្លៃប្រឹក្សា</b> " . $feeOut . "\n";
-        $text .= "📅 <b>កាលបរិច្ឆេទ៖</b> " . $dateOut . "\n";
-        $text .= "⏰ <b>ម៉ៅងប្រឹក្សា៖</b> " . $timeOut;
+        // Sender info
+        $sender = auth()->user();
+        $senderName = $sender?->name ?? 'Unknown';
+        $senderEmail = $sender?->email ?? 'N/A';
 
-        $http = \Illuminate\Support\Facades\Http::withHeaders(['Accept' => 'application/json', 'Content-Type' => 'application/json']);
-        if (app()->environment('local'))
-            $http = $http->withoutVerifying();
+        // Build caption with "Sent by ..."
+        $caption = "👥 <b>ពត៌មានបឋមអតិថិជន</b>\n\n";
+        $caption .= "👤 <b>អតិថិជនឈ្មោះ៖</b> " . $escape($customer->customer_name) . "\n";
+        $caption .= "📧 <b>អ៊ីមែល៖</b> " . $escape($customer->email ?? 'មិនមាន') . "\n";
+        $caption .= "📞 <b>ទូរស័ព្ទ៖</b> " . $escape($customer->phone_number ?? 'មិនមាន') . "\n";
+        $caption .= "💼 <b>ប្រភេទកម្ចី៖</b> " . $escape($loanTitle) . "\n";
+        $caption .= "💵 <b>ទំហំកម្ចី៖</b> " . $loanAmount . "\n";
+        $caption .= "🗂️ <b>ប្រឹក្សា៖</b> " . $escape($customer->consultation ?? 'មិនមាន') . "\n";
+        $caption .= "💳 <b>តម្លៃប្រឹក្សា៖</b> " . $feeOut . "\n";
+        $caption .= "📅 <b>កាលបរិច្ឆេទ៖</b> " . $dateOut . "\n";
+        $caption .= "⏰ <b>ម៉ោងប្រឹក្សា៖</b> " . $timeOut . "\n\n";
+        $caption .= "📨 <i>Sent by</i>: " . $escape($senderName) . " (" . $escape($senderEmail) . ")";
 
-        $res = $http->post("https://api.telegram.org/{$botToken}/sendMessage", [
-            'chat_id' => $chatId,
-            'text' => $text,
-            'parse_mode' => 'HTML',
-            'disable_web_page_preview' => true,
-        ]);
+        $apiBase = "https://api.telegram.org/{$botToken}";
+
+        // HTTPS verification options (production verifies CA; dev can skip)
+        $options = [];
+        $caPath = config('services.telegram.ca_path');
+        if ($caPath)
+            $options['verify'] = $caPath;
+
+        $clientJson = \Illuminate\Support\Facades\Http::withOptions($options);
+        $clientMp = \Illuminate\Support\Facades\Http::withOptions($options)->asMultipart();
+
+        if (app()->environment('local')) {
+            $clientJson = $clientJson->withoutVerifying();
+            $clientMp = $clientMp->withoutVerifying();
+        }
+
+        // Attachment handling
+        if ($customer->attachment) {
+            $path = storage_path('app/public/' . $customer->attachment);
+            if (is_file($path) && is_readable($path)) {
+                $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+
+                if ($isImage) {
+                    $endpoint = "{$apiBase}/sendPhoto";
+                    $payload = [
+                        ['name' => 'chat_id', 'contents' => $chatId],
+                        ['name' => 'photo', 'contents' => fopen($path, 'r'), 'filename' => basename($path)],
+                        ['name' => 'caption', 'contents' => $caption],
+                        ['name' => 'parse_mode', 'contents' => 'HTML'],
+                    ];
+                } else {
+                    $endpoint = "{$apiBase}/sendDocument";
+                    $payload = [
+                        ['name' => 'chat_id', 'contents' => $chatId],
+                        ['name' => 'document', 'contents' => fopen($path, 'r'), 'filename' => basename($path)],
+                        ['name' => 'caption', 'contents' => $caption],
+                        ['name' => 'parse_mode', 'contents' => 'HTML'],
+                    ];
+                }
+
+                $res = $clientMp->post($endpoint, $payload);
+            } else {
+                $res = $clientJson->post("{$apiBase}/sendMessage", [
+                    'chat_id' => $chatId,
+                    'text' => $caption,
+                    'parse_mode' => 'HTML',
+                    'disable_web_page_preview' => true,
+                ]);
+            }
+        } else {
+            $res = $clientJson->post("{$apiBase}/sendMessage", [
+                'chat_id' => $chatId,
+                'text' => $caption,
+                'parse_mode' => 'HTML',
+                'disable_web_page_preview' => true,
+            ]);
+        }
 
         if ($res->successful()) {
             $customer->update(['shared_to_telegram' => true]);
             return back()->with('success', 'Shared to Telegram.');
         }
 
-        \Illuminate\Support\Facades\Log::error('Customer share Telegram failed', ['status' => $res->status(), 'body' => $res->body()]);
+        \Illuminate\Support\Facades\Log::error('Telegram share failed', [
+            'status' => $res->status(),
+            'body' => $res->body()
+        ]);
         return back()->with('error', 'Telegram share failed: ' . $res->status());
     }
-
 
     public function destroy(Customer $customer)
     {

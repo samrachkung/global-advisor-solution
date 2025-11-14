@@ -35,18 +35,19 @@
     <select name="loan_type_id" class="form-select @error('loan_type_id') is-invalid @enderror">
       <option value="">-- Select --</option>
       @foreach($loanTypes as $lt)
-        <option value="{{ $lt->id }}" {{ old('loan_type_id', $customer->loan_type_id ?? null)==$lt->id?'selected':'' }}>
+        <option value="{{ $lt->id }}" {{ old('loan_type_id', $customer->loan_type_id ?? null)==$lt->id ? 'selected' : '' }}>
           {{ $lt->translation()?->title ?? $lt->slug }}
         </option>
       @endforeach
     </select>
     @error('loan_type_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
   </div>
+
   <div class="col-md-6 mb-3">
     <label class="form-label">Consultation</label>
     <select name="consultation" class="form-select @error('consultation') is-invalid @enderror">
       <option value="">-- Select --</option>
-      @foreach(['ផ្ទាល់','Online'] as $opt)
+      @foreach(['Phone','Office','Online','ផ្ទាល់','Online'] as $opt)
         <option value="{{ $opt }}" {{ old('consultation', $customer->consultation ?? '')==$opt ? 'selected':'' }}>{{ $opt }}</option>
       @endforeach
     </select>
@@ -61,28 +62,35 @@
            value="{{ old('consultation_fee', $customer->consultation_fee ?? '') }}">
     @error('consultation_fee')<div class="invalid-feedback">{{ $message }}</div>@enderror
   </div>
+
   <div class="col-md-4 mb-3">
     <label class="form-label">Consultation Date</label>
     <input type="date" name="consultation_date" class="form-control @error('consultation_date') is-invalid @enderror"
            value="{{ old('consultation_date', optional($customer->consultation_date ?? null)->format('Y-m-d')) }}">
     @error('consultation_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
   </div>
+
   <div class="col-md-4 mb-3">
     <label class="form-label">Consultation Time</label>
     <input type="time" name="consultation_time" class="form-control @error('consultation_time') is-invalid @enderror"
-           value="{{ old('consultation_time', isset($customer->consultation_time)? \Carbon\Carbon::parse($customer->consultation_time)->format('H:i') : '') }}">
+           value="{{ old('consultation_time', isset($customer->consultation_time) ? \Carbon\Carbon::parse($customer->consultation_time)->format('H:i') : '') }}">
     @error('consultation_time')<div class="invalid-feedback">{{ $message }}</div>@enderror
   </div>
 </div>
 
 <div class="row">
-  <div class="col-md-3 mb-3">
-    <label class="form-label">Status *</label>
-    <select name="status" class="form-select @error('status') is-invalid @enderror" required>
-      @foreach(['draft'=>'Draft','complete'=>'Complete'] as $k=>$v)
-        <option value="{{ $k }}" {{ old('status', $customer->status ?? 'draft')==$k ? 'selected':'' }}>{{ $v }}</option>
-      @endforeach
-    </select>
-    @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
+  <div class="col-md-6 mb-3">
+    <label class="form-label">Attachment (Image/PDF/Doc)</label>
+    <input type="file" name="attachment" class="form-control @error('attachment') is-invalid @enderror" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx">
+    @error('attachment')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
+    @if(!empty($customer?->attachment))
+      <small class="text-muted d-block mt-2">Current: {{ $customer->attachment }}</small>
+    @endif
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <label class="form-label">Created By</label>
+    <input type="text" class="form-control" value="{{ auth()->user()->name }}" disabled>
   </div>
 </div>
