@@ -949,3 +949,51 @@ body {
   .service-card-lg { max-width: 100%; }
   .service-poster-lg { padding-top: 100% !important; }
 }
+
+/* Poster placeholder */
+.service-poster-lg {
+  position: relative;
+  width: 100%;
+  padding-top: 62.5%; /* 16:10 aspect */
+  overflow: hidden;
+  background: #f8fafc; /* subtle */
+}
+
+.service-poster-lg .placeholder-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb; /* primary */
+  /* Base size for desktop */
+  font-size: 84px;
+}
+
+/* Make it larger on big screens, smaller on phones */
+@media (min-width: 1200px) {
+  .service-poster-lg .placeholder-icon { font-size: 96px; }
+}
+@media (max-width: 767.98px) {
+  .service-poster-lg .placeholder-icon { font-size: 72px; }
+}
+@media (max-width: 575.98px) {
+  .service-poster-lg .placeholder-icon { font-size: 60px; }
+}
+
+/* If using an image file as icon */
+.service-poster-lg .placeholder-img {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.service-poster-lg .placeholder-img img {
+  width: 30%;
+  max-width: 140px;
+  min-width: 64px;
+  height: auto;
+  object-fit: contain;
+  opacity: .95;
+}

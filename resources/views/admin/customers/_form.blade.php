@@ -47,7 +47,7 @@
     <label class="form-label">Consultation</label>
     <select name="consultation" class="form-select @error('consultation') is-invalid @enderror">
       <option value="">-- Select --</option>
-      @foreach(['Phone','Office','Online','ផ្ទាល់','Online'] as $opt)
+      @foreach(['Phone','Office','Online','ផ្ទាល់'] as $opt)
         <option value="{{ $opt }}" {{ old('consultation', $customer->consultation ?? '')==$opt ? 'selected':'' }}>{{ $opt }}</option>
       @endforeach
     </select>
@@ -81,7 +81,8 @@
 <div class="row">
   <div class="col-md-6 mb-3">
     <label class="form-label">Attachment (Image/PDF/Doc)</label>
-    <input type="file" name="attachment" class="form-control @error('attachment') is-invalid @enderror" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx">
+    <input type="file" name="attachment" class="form-control @error('attachment') is-invalid @enderror"
+           accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx">
     @error('attachment')<div class="invalid-feedback">{{ $message }}</div>@enderror
 
     @if(!empty($customer?->attachment))
