@@ -3,11 +3,20 @@
 @section('title', 'Edit Loan Type')
 @section('page-title', 'Edit Loan Type')
 
+@push('styles')
+<style>
+.app-loader{position:fixed;inset:0;background:rgba(255,255,255,.75);backdrop-filter:blur(1px);display:none;align-items:center;justify-content:center;z-index:2000}
+.app-loader.show{display:flex}
+.loader-spinner{width:56px;height:56px;border-radius:50%;border:4px solid #e5e7eb;border-top-color:#2563eb;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+@endpush
+
 @section('content')
 @php
-    $enTranslation = $loanType->translations->where('language.code', 'en')->first();
-    $kmTranslation = $loanType->translations->where('language.code', 'km')->first();
-    $cond = $loanType->conditions;
+  $enTranslation = $loanType->translations->where('language.code', 'en')->first();
+  $kmTranslation = $loanType->translations->where('language.code', 'km')->first();
+  $cond = $loanType->conditions;
 @endphp
 
 <div class="row">
@@ -21,9 +30,8 @@
       </div>
 
       <div class="card-body">
-        <form action="{{ route('admin.loan-types.update', $loanType) }}" method="POST" enctype="multipart/form-data">
-          @csrf
-          @method('PUT')
+        <form action="{{ route('admin.loan-types.update', $loanType) }}" method="POST" enctype="multipart/form-data" class="js-submit-loader">
+          @csrf @method('PUT')
 
           <div class="row mb-4">
             <div class="col-md-6">
@@ -65,59 +73,49 @@
             <div class="col-md-1 mt-3">
               <label class="form-label">Status</label>
               <select name="status" class="form-select @error('status') is-invalid @enderror" required>
-                <option value="active"  {{ old('status', $loanType->status) == 'active' ? 'selected' : '' }}>Active</option>
-                <option value="inactive"{{ old('status', $loanType->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                <option value="active"   {{ old('status', $loanType->status) == 'active' ? 'selected' : '' }}>Active</option>
+                <option value="inactive" {{ old('status', $loanType->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
               </select>
             </div>
           </div>
 
-          <hr class="my-4">
-          <h6 class="mb-3">English Translation</h6>
-
+          <hr class="my-4"><h6 class="mb-3">English Translation</h6>
           <div class="mb-3">
             <label class="form-label">Title (English) *</label>
             <input type="text" name="title_en" class="form-control @error('title_en') is-invalid @enderror"
                    value="{{ old('title_en', $enTranslation?->title) }}" required>
             @error('title_en')<div class="invalid-feedback">{{ $message }}</div>@enderror
           </div>
-
           <div class="mb-3">
             <label class="form-label">Description (English) *</label>
             <textarea name="description_en" rows="4" class="form-control @error('description_en') is-invalid @enderror" required>{{ old('description_en', $enTranslation?->description) }}</textarea>
             @error('description_en')<div class="invalid-feedback">{{ $message }}</div>@enderror
           </div>
-
           <div class="mb-3">
             <label class="form-label">Conditions (English)</label>
             <textarea name="conditions_en" rows="3" class="form-control @error('conditions_en') is-invalid @enderror">{{ old('conditions_en', $enTranslation?->conditions) }}</textarea>
             @error('conditions_en')<div class="invalid-feedback">{{ $message }}</div>@enderror
           </div>
 
-          <hr class="my-4">
-          <h6 class="mb-3">Khmer Translation</h6>
-
+          <hr class="my-4"><h6 class="mb-3">Khmer Translation</h6>
           <div class="mb-3">
             <label class="form-label">Title (Khmer) *</label>
             <input type="text" name="title_km" class="form-control @error('title_km') is-invalid @enderror"
                    value="{{ old('title_km', $kmTranslation?->title) }}" required>
             @error('title_km')<div class="invalid-feedback">{{ $message }}</div>@enderror
           </div>
-
           <div class="mb-3">
             <label class="form-label">Description (Khmer) *</label>
             <textarea name="description_km" rows="4" class="form-control @error('description_km') is-invalid @enderror" required>{{ old('description_km', $kmTranslation?->description) }}</textarea>
             @error('description_km')<div class="invalid-feedback">{{ $message }}</div>@enderror
           </div>
-
           <div class="mb-3">
             <label class="form-label">Conditions (Khmer)</label>
             <textarea name="conditions_km" rows="3" class="form-control @error('conditions_km') is-invalid @enderror">{{ old('conditions_km', $kmTranslation?->conditions) }}</textarea>
             @error('conditions_km')<div class="invalid-feedback">{{ $message }}</div>@enderror
           </div>
 
-          <hr class="my-4">
-          <h6 class="mb-3">Loan Conditions</h6>
-
+          <hr class="my-4"><h6 class="mb-3">Loan Conditions</h6>
           <div class="row">
             <div class="col-md-4 mb-3">
               <label class="form-label">Currency Type</label>
@@ -174,13 +172,27 @@
           </div>
 
           <div class="text-end mt-4">
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-save me-2"></i>Update Loan Type
-            </button>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Update Loan Type</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+
+<div id="ltAppLoader" class="app-loader" aria-hidden="true"><div class="loader-spinner" role="status" aria-label="Loading"></div></div>
 @endsection
+
+@push('scripts')
+<script>
+(function(){
+  const loader=document.getElementById('ltAppLoader');
+  document.querySelectorAll('form.js-submit-loader').forEach(f=>{
+    f.addEventListener('submit',()=>{
+      f.querySelectorAll('button[type="submit"],input[type="submit"]').forEach(b=>b.disabled=true);
+      loader?.classList.add('show');
+    });
+  });
+})();
+</script>
+@endpush

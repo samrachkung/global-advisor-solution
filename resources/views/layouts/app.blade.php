@@ -2,6 +2,31 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ in_array(app()->getLocale(), ['ar', 'fa', 'he']) ? 'rtl' : 'ltr' }}">
 
+
+@push('styles')
+    <style>
+        .route-loading-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0;
+            background: #2563eb;
+            z-index: 2000;
+            transition: width .3s ease
+        }
+
+        .route-loading-bar.show {
+            width: 70%
+        }
+
+        .route-loading-bar.done {
+            width: 100%;
+            transition: width .2s ease
+        }
+    </style>
+@endpush
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -178,6 +203,36 @@
     </noscript>
 
     @stack('scripts')
+
+    <div id="routeLoadingBar" class="route-loading-bar" aria-hidden="true"></div>
+    @push('scripts')
+        <script>
+            (function() {
+                const bar = document.getElementById('routeLoadingBar');
+
+                function start() {
+                    bar?.classList.add('show');
+                    bar?.classList.remove('done');
+                }
+
+                function end() {
+                    bar?.classList.add('done');
+                    setTimeout(() => bar?.classList.remove('show', 'done'), 250);
+                }
+                // Start on any same-window nav click
+                document.querySelectorAll('a.nav-link, .dropdown-item, .navbar-brand').forEach(a => {
+                    a.addEventListener('click', (e) => {
+                        const url = a.getAttribute('href');
+                        if (url && !url.startsWith('#') && a.target !== '_blank' && !e.metaKey && !e
+                            .ctrlKey) start();
+                    });
+                });
+                // Finish after page load
+                window.addEventListener('pageshow', end);
+            })();
+        </script>
+    @endpush
+
 </body>
 
 </html>

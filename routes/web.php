@@ -27,6 +27,9 @@ Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/services', [LoanServiceController::class, 'index'])->name('services.index');
 Route::get('/services/{slug}', [LoanServiceController::class, 'show'])->name('services.show');
 
+Route::get('/quick-contact', [ContactController::class, 'quickContactForm'])->name('quick-contact.form');
+Route::post('/quick-contact', [ContactController::class, 'quickContactStore'])->name('quick-contact.store');
+
 
 // Blog
 Route::get('/blog', [FrontendBlogController::class, 'index'])->name('blog.index');

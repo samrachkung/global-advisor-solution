@@ -7,6 +7,7 @@ return [
     'blog' => 'ប្លក់',
     'career' => 'ការងារ',
     'contact_us' => 'ទំនាក់ទំនង',
+
     'our_services' => 'សេវាកម្មរបស់យើង',
     'learn_more' => 'ស្វែងយល់បន្ថែម',
     'apply_now' => 'ប្រឹក្សាឥឡូវនេះ',
@@ -14,18 +15,22 @@ return [
     'submit' => 'ដាក់ស្នើ',
     'send_message' => 'ផ្ញើសារ',
     'message_sent' => 'សារបស់អ្នកត្រូវបានផ្ញើដោយជោគជ័យ!',
-    'name' => 'ឈ្មោះ',
+
+    'name' => 'ឈ្មោះពេញ',
     'email' => 'អ៊ីមែល',
     'phone' => 'លេខទូរស័ព្ទ',
     'subject' => 'ប្រធានបទ',
     'message' => 'សារ',
     'address' => 'អាស័យដ្ឋាន',
+
     'quick_links' => 'តំណភ្ជាប់រហ័ស',
     'contact_info' => 'ព័ត៌មានទំនាក់ទំនង',
+
     'no_posts' => 'មិនមានប្លក់',
     'categories' => 'ប្រភេទ',
     'views' => 'ចំនួនមើល',
     'related_posts' => 'ប្លក់ពាក់ព័ន្ធ',
+
     'join_our_team' => 'ចូលរួមជាមួយក្រុមរបស់យើង',
     'view_details' => 'មើលព័ត៌មានលម្អិត',
     'no_openings' => 'បច្ចុប្បន្នមិនមានការងារ',
@@ -38,17 +43,23 @@ return [
     'cover_letter' => 'លិខិតបំពង',
     'submit_application' => 'ដាក់ពាក្យ',
     'application_submitted' => 'ពាក្យរបស់អ្នកត្រូវបានដាក់ដោយជោគជ័យ!',
+
+    // Legacy complaint keys (kept if still referenced)
     'customer_complaint' => 'ទម្រង់បណ្តឹងរបស់អតិថិជន',
     'loan_type' => 'ប្រភេទឥណទាន',
     'priority' => 'អាទិភាព',
     'attachment' => 'ឯកសារភ្ជាប់',
     'description' => 'ការពិពណ៌នា',
     'complaint_submitted' => 'បណ្តឹងរបស់អ្នកត្រូវបានដាក់។ លេខយោង៖',
-    'explore_services' => '[translate:ស្វែងយល់សេវាកម្ម]',
+
+    // CTA on home hero
+    'explore_services' => 'ស្វែងយល់សេវាកម្ម',
+
+    // Service detail
     'about_this_service' => 'អំពីសេវាកម្មនេះ',
     'conditions' => 'លក្ខខណ្ឌ',
     'currency_type' => 'ប្រភេទរូបិយប័ណ្ណ',
-    'loan_amount' => 'ចំនួនថវិកាកម្ចី',
+    'loan_amount' => 'ចំនួនកម្ចី',
     'duration' => 'រយៈពេល',
     'up_to_months' => 'រហូតដល់ :months ខែ',
     'age_requirement' => 'កម្រិតអាយុត្រូវការ',
@@ -56,20 +67,28 @@ return [
     'collateral_types' => 'ប្រភេទធានា',
     'ready_to_apply' => 'ត្រៀមប្រឹក្សារួចហើយ?',
     'get_started_today' => 'ចាប់ផ្តើមប្រឹក្សាកម្ចីរបស់អ្នកថ្ងៃនេះ',
+
+    // About page content
     'who_we_are' => 'ពួកយើងជាអ្នកណា',
     'about_intro_lead' => 'Global Advisor Solution ជាក្រុមហ៊ុនយោបល់ហិរញ្ញវត្ថុនាំមុខ ដែលមានជំនាញផ្នែកណែនាំកម្ចី។',
     'about_intro_p2' => 'យើងផ្តល់ដំណោះស្រាយកម្ចីពេញលេញ ឆបគ្នានឹងតម្រូវការផ្សេងៗ ចាប់ពីកសិកម្ម ធុរៈកិច្ច ទៅកម្ចីផ្ទាល់ខ្លួន និងការសិក្សា។',
     'about_intro_p3' => 'ដោយបទពិសោធន៍ច្រើនឆ្នាំ ក្រុមការងារយើងជួយលោកអ្នកសម្រេចគោលដៅហិរញ្ញវត្ថុ ដោយសេវាផ្ទាល់តម្លាភាព ទុកចិត្តបាន និងផ្ដោតលើអតិថិជន។',
+
+    // Features
     'feature_expert_team_title' => 'ក្រុមអ្នកជំនាញ',
     'feature_expert_team_desc' => 'អ្នកប្រឹក្សាហិរញ្ញវត្ថុមានបទពិសោធន៍ ត្រៀមជួយអ្នក',
     'feature_trusted_service_title' => 'សេវាទុកចិត្តបាន',
     'feature_trusted_service_desc' => 'ដំណោះស្រាយកម្ចីមានតម្លាភាព និងជាក់លាក់',
     'feature_fast_processing_title' => 'ដំណើរការលឿន',
     'feature_fast_processing_desc' => 'អនុម័ត និងចំណាយប្រាក់រហ័ស',
+
+    // Stats
     'years_experience' => 'ឆ្នាំបទពិសោធន៍',
     'happy_clients' => 'អតិថិជនពេញចិត្ត',
     'loan_products' => 'ផលិតផលកម្ចី',
     'satisfaction_rate' => 'អត្រាពេញចិត្ត',
+
+    // Team
     'our_team' => 'ក្រុមការងារ',
     'our_team_subtitle' => 'អ្នកជំនាញមានចំណង់ចំណូលចិត្ត ក្នុងការជួយឱ្យអ្នកជោគជ័យ',
     'team_ceo' => 'នាយកប្រតិបត្តិ',
@@ -80,6 +99,16 @@ return [
     'team_sales_bio' => 'ជំរុញដៃគូភាព និងការចែកចាយផលិតផលកម្ចី។',
     'team_risk_mgr' => 'អ្នកគ្រប់គ្រងហានិភ័យ និងអនុវត្ត',
     'team_risk_bio' => 'ត្រួតពិនិត្យហានិភ័យ KYC និងការអនុលោមតាមបទប្បញ្ញត្តិ។',
+
+    // Currency helper
     'both' => 'រៀល ឬ ដុល្លារ',
 
+    // ========================
+    // New: Quick Contact flow
+    // ========================
+    'quick_contact' => 'ទំនាក់ទំនងពួកយើង',
+    'consultation' => 'ប្រភេទប្រឹក្សា',
+    'consultation_date' => 'កាលបរិច្ឆេទប្រឹក្សា',
+    'consultation_time' => 'ម៉ោងប្រឹក្សា',
+    'select' => 'ជ្រើសរើស',
 ];
