@@ -1,6 +1,49 @@
 @extends('layouts.app')
 
-@section('title', $loanType->translation()?->title . ' - Global Advisor Solution')
+@section('title', ($loanType->translation()?->title).' - Global Advisor Solution')
+@section('meta_description', Str::limit(strip_tags($loanType->translation()?->description), 160))
+@section('canonical', route('services.show', $loanType->slug))
+@section('og_image', !empty($loanType->poster) ? asset('uploads/services/'.$loanType->poster) : asset('images/logo.png'))
+@section('og_type', 'product')
+
+@section('schema_breadcrumbs')
+@php
+$crumbs = [
+  '@context'=>'https://schema.org',
+  '@type'=>'BreadcrumbList',
+  'itemListElement'=>[
+    ['@type'=>'ListItem','position'=>1,'name'=>__('messages.home'),'item'=>url('/')],
+    ['@type'=>'ListItem','position'=>2,'name'=>__('messages.services'),'item'=>route('services.index')],
+    ['@type'=>'ListItem','position'=>3,'name'=>$loanType->translation()?->title,'item'=>route('services.show',$loanType->slug)],
+  ],
+];
+@endphp
+<script type="application/ld+json">{!! json_encode($crumbs, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
+@endsection
+
+@section('schema_services')
+@php
+$svc = [
+  '@context' => 'https://schema.org',
+  '@type' => 'Service',
+  'name' => $loanType->translation()?->title,
+  'description' => Str::limit(strip_tags($loanType->translation()?->description), 160),
+  'url' => route('services.show', $loanType->slug),
+  'image' => !empty($loanType->poster) ? asset('uploads/services/'.$loanType->poster) : asset('images/logo.png'),
+  'areaServed' => ['KH'],
+  'provider' => [
+    '@type' => 'Organization',
+    'name' => 'Global Advisor Solution',
+    'url' => url('/'),
+    'logo' => asset('images/logo.png')
+  ],
+  'serviceType' => 'Financial Service',
+  // Optional structured conditions
+  'termsOfService' => $loanType->translation()?->conditions ?: null,
+];
+@endphp
+<script type="application/ld+json">{!! json_encode($svc, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
+@endsection
 
 @section('content')
 <section class="page-header py-5"
@@ -30,8 +73,7 @@
         @if($loanType->poster)
         <div class="card shadow-sm mb-4" data-aos="fade-up">
           <div class="service-detail-poster">
-            <img src="{{ asset('uploads/services/' . $loanType->poster) }}"
-                 alt="{{ $loanType->translation()?->title }}">
+            <img src="{{ asset('uploads/services/' . $loanType->poster) }}" alt="{{ $loanType->translation()?->title }}">
           </div>
         </div>
         @endif
@@ -52,18 +94,15 @@
             <div class="row">
               <div class="col-md-6">
                 <p><strong>{{ __('messages.currency_type') }}:</strong> {{ __('messages.both') }}</p>
-                <p>
-                  <strong>{{ __('messages.loan_amount') }}:</strong>
+                <p><strong>{{ __('messages.loan_amount') }}:</strong>
                   ${{ number_format($loanType->conditions->min_amount) }} - ${{ number_format($loanType->conditions->max_amount) }}
                 </p>
               </div>
               <div class="col-md-6">
-                <p>
-                  <strong>{{ __('messages.duration') }}:</strong>
+                <p><strong>{{ __('messages.duration') }}:</strong>
                   {{ __('messages.up_to_months', ['months' => $loanType->conditions->max_duration_months]) }}
                 </p>
-                <p>
-                  <strong>{{ __('messages.age_requirement') }}:</strong>
+                <p><strong>{{ __('messages.age_requirement') }}:</strong>
                   {{ $loanType->conditions->min_age }} - {{ $loanType->conditions->max_age }} {{ __('messages.years') }}
                 </p>
               </div>
@@ -100,12 +139,8 @@
           <div class="card-body text-center">
             <h4 class="card-title mb-4">{{ __('messages.ready_to_apply') }}</h4>
             <p class="text-muted">{{ __('messages.get_started_today') }}</p>
-            <a href="{{ route('contact') }}" class="btn btn-primary btn-lg w-100 mb-3">
-              {{ __('messages.apply_now') }}
-            </a>
-            <a href="{{ route('contact') }}" class="btn btn-outline-secondary w-100">
-              {{ __('messages.contact_us') }}
-            </a>
+            <a href="{{ route('contact') }}" class="btn btn-primary btn-lg w-100 mb-3">{{ __('messages.apply_now') }}</a>
+            <a href="{{ route('contact') }}" class="btn btn-outline-secondary w-100">{{ __('messages.contact_us') }}</a>
           </div>
         </div>
       </div>
@@ -117,20 +152,7 @@
 
 @push('styles')
 <style>
-.service-detail-poster{
-  position: relative;
-  width: 100%;
-  padding-top: 100%;
-  overflow: hidden;
-  border-top-left-radius: .5rem;
-  border-top-right-radius: .5rem;
-}
-.service-detail-poster img{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.service-detail-poster{ position: relative; width: 100%; padding-top: 100%; overflow: hidden; border-top-left-radius: .5rem; border-top-right-radius: .5rem; }
+.service-detail-poster img{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 </style>
 @endpush

@@ -1,7 +1,8 @@
 @extends('layouts.app')
-
 @section('title', 'Home - Global Advisor Solution')
-
+@section('meta_description', 'Loans and financial advisory in Cambodia — construction, vehicle, fast loans and consulting.')
+@section('canonical', route('home'))
+@section('og_image', asset('images/og/home.jpg'))
 @section('content')
     <!-- Hero Slideshow Section -->
     <section class="hero-section position-relative">
