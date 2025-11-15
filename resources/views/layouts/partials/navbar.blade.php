@@ -95,11 +95,12 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}"
-                        href="{{ route('contact') }}">
+                    <a class="nav-link {{ request()->routeIs('quick-contact.*') ? 'active' : '' }}"
+                        href="{{ route('quick-contact.form') }}">
                         <i class="fas fa-envelope me-2"></i>{{ __('messages.contact_us') }}
                     </a>
                 </li>
+
 
                 <!-- Language -->
                 <li class="nav-item dropdown language-switcher ms-lg-3">

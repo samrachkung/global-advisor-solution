@@ -206,13 +206,10 @@
                             <h4 class="card-title mb-4">{{ __('messages.ready_to_apply') }}</h4>
                             <p class="text-muted">{{ __('messages.get_started_today') }}</p>
                             <div class="d-grid gap-2">
-                                <a href="{{ route('quick-contact.form') }}" class="btn btn-warning btn-lg">
-                                    <i class="fas fa-bolt me-2"></i>{{ __('messages.quick_contact') }}
-                                </a>
-                                <a href="{{ route('contact') }}" class="btn btn-primary btn-lg">
+                                <a href="{{ route('quick-contact.form') }}" class="btn btn-primary btn-lg">
                                     {{ __('messages.apply_now') }}
                                 </a>
-                                <a href="{{ route('contact') }}" class="btn btn-outline-secondary">
+                                <a href="{{ route('quick-contact.form') }}" class="btn btn-outline-secondary">
                                     {{ __('messages.contact_us') }}
                                 </a>
                             </div>

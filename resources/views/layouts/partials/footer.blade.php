@@ -51,7 +51,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('contact') }}" class="text-white text-decoration-none">
+                        <a href="{{ route('quick-contact.form') }}" class="text-white text-decoration-none">
                             <i class="fas fa-envelope me-2 text-warning"></i>{{ __('messages.contact_us') }}
                         </a>
                     </li>
@@ -108,7 +108,7 @@
             <!-- Contact -->
             <div class="col-lg-3 col-md-6 mb-4">
                 <h5 class="mb-3">{{ __('messages.contact_info') }}</h5>
-                <ul class="list-unstyled text-white-50">
+                <ul class="list-unstyled text-white">
                     <li class="mb-2">
                         <i class="fas fa-map-marker-alt me-2 text-warning"></i>
                         Street 317 and Street 335, Sangkat Boeung Kak I, Khan Toul Kork, Phnom Penh, Cambodia

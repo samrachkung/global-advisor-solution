@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
-use App\Models\Complaint;
 use App\Models\LoanType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -13,13 +12,16 @@ use Carbon\Carbon;
 
 class ContactController extends Controller
 {
+    // Contact page
     public function index()
     {
         return view('frontend.contact');
     }
 
+    // Normal contact form
     public function store(Request $request)
     {
+        // Same style validation as quick contact
         $validated = $request->validate([
             'name'    => 'required|string|max:255',
             'email'   => 'required|email|max:255',
@@ -28,14 +30,17 @@ class ContactController extends Controller
             'message' => 'required|string'
         ]);
 
+        // Save to DB
         $message = ContactMessage::create($validated);
+
+        // Send to Telegram (same pattern as quick-contact)
         $this->notifyTelegramContact($message);
 
         return back()->with('success', __('messages.message_sent'));
     }
 
+    // ---------- Quick Contact ----------
 
-    // Quick Contact
     public function quickContactForm()
     {
         $loanTypes = LoanType::where('status', 'active')->orderBy('order')->get();
@@ -73,10 +78,14 @@ class ContactController extends Controller
         try {
             $botToken = config('services.telegram.bot_token', env('TELEGRAM_BOT_TOKEN'));
             $chatId   = config('services.telegram.chat_id',   env('TELEGRAM_CHAT_ID'));
-            if (!$botToken || !$chatId) { Log::warning('Telegram not configured for contact'); return false; }
+
+            if (!$botToken || !$chatId) {
+                Log::warning('Telegram not configured for contact');
+                return false;
+            }
 
             $apiUrl = "https://api.telegram.org/{$botToken}/sendMessage";
-            $escape = fn($t)=>str_replace(['&','<','>'],['&amp;','&lt;','&gt;'],(string)$t);
+            $escape = fn($t) => str_replace(['&','<','>'], ['&amp;','&lt;','&gt;'], (string) $t);
 
             $text  = "<b>សារ​ទំនាក់ទំនង​ថ្មី</b>\n\n";
             $text .= "<b>ឈ្មោះ :</b> ".$escape($m->name)."\n";
@@ -86,46 +95,74 @@ class ContactController extends Controller
             $text .= "<b>សារ :</b>\n".$escape($m->message)."\n";
             $text .= "<b>ពេលវេលា :</b> ".now()->format('Y-m-d H:i:s');
 
-            $http = Http::withHeaders(['Accept'=>'application/json','Content-Type'=>'application/json']);
-            if (app()->environment('local')) $http=$http->withoutVerifying();
-            $res = $http->post($apiUrl, ['chat_id'=>$chatId,'text'=>$text,'parse_mode'=>'HTML','disable_web_page_preview'=>true]);
+            $http = Http::withHeaders([
+                'Accept'       => 'application/json',
+                'Content-Type' => 'application/json',
+            ]);
+
+            if (app()->environment('local')) {
+                $http = $http->withoutVerifying();
+            }
+
+            $res = $http->post($apiUrl, [
+                'chat_id'                => $chatId,
+                'text'                   => $text,
+                'parse_mode'             => 'HTML',
+                'disable_web_page_preview' => true,
+            ]);
 
             return $res->successful();
-        } catch (\Throwable $e) { Log::error('Telegram contact exception: '.$e->getMessage()); return false; }
+        } catch (\Throwable $e) {
+            Log::error('Telegram contact exception: '.$e->getMessage());
+            return false;
+        }
     }
-
-
 
     private function notifyTelegramQuickContact(array $v): bool
     {
         try {
             $botToken = config('services.telegram.bot_token', env('TELEGRAM_BOT_TOKEN'));
             $chatId   = config('services.telegram.chat_id',   env('TELEGRAM_CHAT_ID'));
-            if (!$botToken || !$chatId) return false;
+
+            if (!$botToken || !$chatId) {
+                return false;
+            }
 
             // Resolve loan type display name
             $loanName = null;
             if (!empty($v['loan_type_id'])) {
                 $lt = LoanType::with('translations.language')->find($v['loan_type_id']);
-                if ($lt) $loanName = $lt->translation()?->title ?: ($lt->slug ? ucfirst(str_replace('-', ' ', $lt->slug)) : null);
+                if ($lt) {
+                    $loanName = $lt->translation()?->title
+                        ?: ($lt->slug ? ucfirst(str_replace('-', ' ', $lt->slug)) : null);
+                }
             }
 
             $apiUrl = "https://api.telegram.org/{$botToken}/sendMessage";
-            $escape = fn($t)=>str_replace(['&','<','>'],['&amp;','&lt;','&gt;'],(string)$t);
+            $escape = fn($t) => str_replace(['&','<','>'], ['&amp;','&lt;','&gt;'], (string) $t);
 
             $lines = [];
-            $lines[] = "ទំនាក់ទំនងរហ័ស";
+            $lines[] = "ពត៌មានបឋមអតិថិជន";
             $lines[] = "";
             $lines[] = "ឈ្មោះ : ".$escape($v['customer_name']);
             $lines[] = "អ៊ីមែល : ".$escape($v['customer_email']);
             $lines[] = "ទូរស័ព្ទ : ".$escape($v['customer_phone']);
-            if ($loanName) $lines[] = "ប្រភេទឥណទាន : ".$escape($loanName);
-            if (!empty($v['loan_amount'])) $lines[] = "ចំនួនថវិកាកម្ចី : $".number_format((float)$v['loan_amount'],2);
-            if (!empty($v['consultation'])) $lines[] = "ប្រភេទប្រឹក្សា : ".$escape($v['consultation']);
-            if (!empty($v['consultation_date'])) $lines[] = "កាលបរិច្ឆេទប្រឹក្សា : ".$v['consultation_date'];
-            // Use 12h format if available
+
+            if ($loanName) {
+                $lines[] = "ប្រភេទឥណទាន : ".$escape($loanName);
+            }
+            if (!empty($v['loan_amount'])) {
+                $lines[] = "ចំនួនឥណទាន : $".number_format((float) $v['loan_amount'], 2);
+            }
+            if (!empty($v['consultation'])) {
+                $lines[] = "ប្រភេទប្រឹក្សា : ".$escape($v['consultation']);
+            }
+            if (!empty($v['consultation_date'])) {
+                $lines[] = "កាលបរិច្ឆេទប្រឹក្សា : ".$v['consultation_date'];
+            }
+
             if (!empty($v['consultation_time_12'])) {
-                $lines[] = "ម៉ោងប្រឹក្សា : ".$v['consultation_time_12']; // e.g., 2:30 PM
+                $lines[] = "ម៉ោងប្រឹក្សា : ".$v['consultation_time_12'];
             } elseif (!empty($v['consultation_time'])) {
                 try {
                     $lines[] = "ម៉ោងប្រឹក្សា : ".Carbon::createFromFormat('H:i', $v['consultation_time'])->format('g:i A');
@@ -136,9 +173,21 @@ class ContactController extends Controller
 
             $text = implode("\n", $lines);
 
-            $http = Http::withHeaders(['Accept'=>'application/json','Content-Type'=>'application/json']);
-            if (app()->environment('local')) $http=$http->withoutVerifying();
-            $res = $http->post($apiUrl, ['chat_id'=>$chatId,'text'=>$text,'parse_mode'=>'HTML','disable_web_page_preview'=>true]);
+            $http = Http::withHeaders([
+                'Accept'       => 'application/json',
+                'Content-Type' => 'application/json',
+            ]);
+
+            if (app()->environment('local')) {
+                $http = $http->withoutVerifying();
+            }
+
+            $res = $http->post($apiUrl, [
+                'chat_id'                => $chatId,
+                'text'                   => $text,
+                'parse_mode'             => 'HTML',
+                'disable_web_page_preview' => true,
+            ]);
 
             return $res->successful();
         } catch (\Throwable $e) {

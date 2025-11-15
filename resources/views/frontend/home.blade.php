@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'Home - Global Advisor Solution')
-@section('meta_description', 'Loans and financial advisory in Cambodia — construction, vehicle, fast loans and
+@section('meta_description',
+    'Loans and financial advisory in Cambodia — construction, vehicle, fast loans and
     consulting.')
 @section('canonical', route('home'))
 @section('og_image', asset('images/og/home.jpg'))
@@ -197,26 +198,51 @@
             }
         }
     </style>
+    </style>
 @endpush
 
 @push('scripts')
     <script>
-        const heroSwiper = new Swiper(".heroSwiper", {
-            loop: true,
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false
-            },
-            pagination: {
-                el: ".swiper-pagination",
-                clickable: true
-            },
-            effect: 'fade',
-            fadeEffect: {
-                crossFade: true
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure Swiper exists
+            if (typeof Swiper === 'undefined') {
+                console.error('Swiper is not loaded');
+                return;
+            }
+
+            const heroSwiper = new Swiper('.heroSwiper', {
+                loop: true,
+                speed: 800, // smoother animation duration (ms)
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true
+                },
+                effect: 'fade',
+                fadeEffect: {
+                    crossFade: true
+                },
+                // Make it responsive and fluid
+                grabCursor: true
+            });
+
+            const prevBtn = document.querySelector('.hero-prev');
+            const nextBtn = document.querySelector('.hero-next');
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function() {
+                    heroSwiper.slidePrev();
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    heroSwiper.slideNext();
+                });
             }
         });
-        document.querySelector('.hero-prev').addEventListener('click', () => heroSwiper.slidePrev());
-        document.querySelector('.hero-next').addEventListener('click', () => heroSwiper.slideNext());
     </script>
 @endpush

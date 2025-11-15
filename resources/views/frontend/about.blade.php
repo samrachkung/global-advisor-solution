@@ -85,21 +85,21 @@
       @php
         $team = [
           [
-            'name' => 'Sok Dara',
+            'name' => 'Khouy Ousaphea',
             'title' => __('messages.team_ceo'),
             'photo' => 'team-1.jpg',
             'bio'   => __('messages.team_ceo_bio'),
             'social'=> ['linkedin'=>'#','facebook'=>'#']
           ],
           [
-            'name' => 'Chanthy Kim',
+            'name' => 'Yim Dara',
             'title' => __('messages.team_ops_head'),
             'photo' => 'team-2.jpg',
             'bio'   => __('messages.team_ops_bio'),
             'social'=> ['linkedin'=>'#','facebook'=>'#']
           ],
           [
-            'name' => 'Sophea Lim',
+            'name' => 'Yim Samnang',
             'title' => __('messages.team_sales_head'),
             'photo' => 'team-3.jpg',
             'bio'   => __('messages.team_sales_bio'),
