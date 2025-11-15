@@ -136,96 +136,128 @@ class CustomerController extends Controller
         return back()->with('success', 'Customer marked complete.');
     }
 
-    public function share(Customer $customer)
-    {
-        Gate::authorize('share', $customer);
+public function share(Customer $customer)
+{
+    Gate::authorize('share', $customer);
 
-        $botToken = config('services.telegram.bot_token');
-        $chatId   = config('services.telegram.chat_id');
+    $botToken = config('services.telegram.bot_token');
+    $chatId   = config('services.telegram.chat_id');
+    $threadId = (int) config('services.telegram.new_customer_consultant_thread_id', 0);
 
-        if (!$botToken || !$chatId) return back()->with('error', 'Telegram is not configured.');
-        if ($customer->shared_to_telegram) return back()->with('info', 'Already shared to Telegram.');
-        if ($customer->status === 'draft') return back()->with('error', 'Cannot share draft. Please complete it first.');
-
-        $loanTitle  = optional($customer->loanType)->translation()?->title ?? 'មិនមាន';
-        $dateOut    = $customer->consultation_date ? Carbon::parse($customer->consultation_date)->format('Y-m-d') : 'មិនមាន';
-        $timeOut    = $customer->consultation_time ? Carbon::parse($customer->consultation_time)->format('H:i') : 'មិនមាន';
-        $loanAmount = $customer->loan_amount !== null ? '$' . number_format((float)$customer->loan_amount, 2) : 'មិនមាន';
-        $feeOut     = $customer->consultation_fee !== null ? '$' . number_format((float)$customer->consultation_fee, 2) : 'មិនមាន';
-
-        $escape = fn($t) => str_replace(['&','<','>'], ['&amp;','&lt;','&gt;'], (string)$t);
-
-        $sender      = auth()->user();
-        $senderName  = $sender?->name ?? 'Unknown';
-        $senderEmail = $sender?->email ?? 'N/A';
-
-        $caption  = "👥 <b>ពត៌មានបឋមអតិថិជន</b>\n\n";
-        $caption .= "👤 <b>អតិថិជនឈ្មោះ៖</b> " . $escape($customer->customer_name) . "\n";
-        $caption .= "📧 <b>អ៊ីមែល៖</b> " . $escape($customer->email ?? 'មិនមាន') . "\n";
-        $caption .= "📞 <b>ទូរស័ព្ទ៖</b> " . $escape($customer->phone_number ?? 'មិនមាន') . "\n";
-        $caption .= "💼 <b>ប្រភេទកម្ចី៖</b> " . $escape($loanTitle) . "\n";
-        $caption .= "💵 <b>ទំហំកម្ចី៖</b> " . $loanAmount . "\n";
-        $caption .= "🗂️ <b>ប្រឹក្សា៖</b> " . $escape($customer->consultation ?? 'មិនមាន') . "\n";
-        $caption .= "💳 <b>តម្លៃប្រឹក្សា៖</b> " . $feeOut . "\n";
-        $caption .= "📅 <b>កាលបរិច្ឆេទ៖</b> " . $dateOut . "\n";
-        $caption .= "⏰ <b>ម៉ោងប្រឹក្សា៖</b> " . $timeOut . "\n\n";
-        $caption .= "📨 <i>Sent by</i>: " . $escape($senderName) . " (" . $escape($senderEmail) . ")";
-
-        $apiBase  = "https://api.telegram.org/{$botToken}";
-        $options  = [];
-        $caPath   = config('services.telegram.ca_path');
-        if ($caPath) $options['verify'] = $caPath;
-
-        $clientJson = Http::withOptions($options);
-        $clientMp   = Http::withOptions($options)->asMultipart();
-
-        if (app()->environment('local')) {
-            $clientJson = $clientJson->withoutVerifying();
-            $clientMp   = $clientMp->withoutVerifying();
-        }
-
-        if ($customer->attachment) {
-            $path = storage_path('app/public/' . $customer->attachment);
-            if (is_file($path) && is_readable($path)) {
-                $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-                $isImage = in_array($ext, ['jpg','jpeg','png','gif','webp']);
-                if ($isImage) {
-                    $endpoint = "{$apiBase}/sendPhoto";
-                    $payload = [
-                        ['name'=>'chat_id','contents'=>$chatId],
-                        ['name'=>'photo','contents'=>fopen($path,'r'),'filename'=>basename($path)],
-                        ['name'=>'caption','contents'=>$caption],
-                        ['name'=>'parse_mode','contents'=>'HTML'],
-                    ];
-                } else {
-                    $endpoint = "{$apiBase}/sendDocument";
-                    $payload = [
-                        ['name'=>'chat_id','contents'=>$chatId],
-                        ['name'=>'document','contents'=>fopen($path,'r'),'filename'=>basename($path)],
-                        ['name'=>'caption','contents'=>$caption],
-                        ['name'=>'parse_mode','contents'=>'HTML'],
-                    ];
-                }
-                $res = $clientMp->post($endpoint, $payload);
-            } else {
-                $res = $clientJson->post("{$apiBase}/sendMessage", [
-                    'chat_id'=>$chatId,'text'=>$caption,'parse_mode'=>'HTML','disable_web_page_preview'=>true
-                ]);
-            }
-        } else {
-            $res = $clientJson->post("{$apiBase}/sendMessage", [
-                'chat_id'=>$chatId,'text'=>$caption,'parse_mode'=>'HTML','disable_web_page_preview'=>true
-            ]);
-        }
-
-        if ($res->successful()) {
-            $customer->update(['shared_to_telegram'=>true]);
-            return back()->with('success', 'Shared to Telegram.');
-        }
-
-        Log::error('Telegram share failed', ['status'=>$res->status(),'body'=>$res->body()]);
-        return back()->with('error', 'Telegram share failed: '.$res->status());
+    if (!$botToken || !$chatId) {
+        return back()->with('error', 'Telegram is not configured.');
     }
+    if ($customer->shared_to_telegram) {
+        return back()->with('info', 'Already shared to Telegram.');
+    }
+    if ($customer->status === 'draft') {
+        return back()->with('error', 'Cannot share draft. Please complete it first.');
+    }
+
+    $loanTitle  = optional($customer->loanType)->translation()?->title ?? 'មិនមាន';
+    $dateOut    = $customer->consultation_date ? Carbon::parse($customer->consultation_date)->format('Y-m-d') : 'មិនមាន';
+    $timeOut    = $customer->consultation_time ? Carbon::parse($customer->consultation_time)->format('H:i') : 'មិនមាន';
+    $loanAmount = $customer->loan_amount !== null ? '$' . number_format((float)$customer->loan_amount, 2) : 'មិនមាន';
+    $feeOut     = $customer->consultation_fee !== null ? '$' . number_format((float)$customer->consultation_fee, 2) : 'មិនមាន';
+
+    $escape = fn($t) => str_replace(['&','<','>'], ['&amp;','&lt;','&gt;'], (string)$t);
+
+    $sender      = auth()->user();
+    $senderName  = $sender?->name ?? 'Unknown';
+    $senderEmail = $sender?->email ?? 'N/A';
+
+    $caption  = "👥 <b>ពត៌មានបឋមអតិថិជន</b>\n\n";
+    $caption .= "👤 <b>អតិថិជនឈ្មោះ៖</b> " . $escape($customer->customer_name) . "\n";
+    $caption .= "📧 <b>អ៊ីមែល៖</b> " . $escape($customer->email ?? 'មិនមាន') . "\n";
+    $caption .= "📞 <b>ទូរស័ព្ទ៖</b> " . $escape($customer->phone_number ?? 'មិនមាន') . "\n";
+    $caption .= "💼 <b>ប្រភេទកម្ចី៖</b> " . $escape($loanTitle) . "\n";
+    $caption .= "💵 <b>ទំហំកម្ចី៖</b> " . $loanAmount . "\n";
+    $caption .= "🗂️ <b>ប្រឹក្សា៖</b> " . $escape($customer->consultation ?? 'មិនមាន') . "\n";
+    $caption .= "💳 <b>តម្លៃប្រឹក្សា៖</b> " . $feeOut . "\n";
+    $caption .= "📅 <b>កាលបរិច្ឆេទ៖</b> " . $dateOut . "\n";
+    $caption .= "⏰ <b>ម៉ោងប្រឹក្សા៖</b> " . $timeOut . "\n\n";
+    $caption .= "📨 <i>Sent by</i>: " . $escape($senderName) . " (" . $escape($senderEmail) . ")";
+
+    $apiBase = "https://api.telegram.org/{$botToken}";
+    $options = [];
+    $caPath  = config('services.telegram.ca_path');
+    if ($caPath) {
+        $options['verify'] = $caPath;
+    }
+
+    $clientJson = Http::withOptions($options);
+    $clientMp   = Http::withOptions($options)->asMultipart();
+
+    if (app()->environment('local')) {
+        $clientJson = $clientJson->withoutVerifying();
+        $clientMp   = $clientMp->withoutVerifying();
+    }
+
+    if ($customer->attachment) {
+        $path = storage_path('app/public/' . $customer->attachment);
+        if (is_file($path) && is_readable($path)) {
+            $ext     = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+            $isImage = in_array($ext, ['jpg','jpeg','png','gif','webp']);
+
+            if ($isImage) {
+                $endpoint = "{$apiBase}/sendPhoto";
+                $payload  = [
+                    ['name' => 'chat_id', 'contents' => $chatId],
+                    ['name' => 'photo',   'contents' => fopen($path, 'r'), 'filename' => basename($path)],
+                    ['name' => 'caption', 'contents' => $caption],
+                    ['name' => 'parse_mode', 'contents' => 'HTML'],
+                ];
+            } else {
+                $endpoint = "{$apiBase}/sendDocument";
+                $payload  = [
+                    ['name' => 'chat_id',  'contents' => $chatId],
+                    ['name' => 'document', 'contents' => fopen($path, 'r'), 'filename' => basename($path)],
+                    ['name' => 'caption',  'contents' => $caption],
+                    ['name' => 'parse_mode', 'contents' => 'HTML'],
+                ];
+            }
+
+            if ($threadId > 0) {
+                $payload[] = ['name' => 'message_thread_id', 'contents' => $threadId];
+            }
+
+            $res = $clientMp->post($endpoint, $payload);
+        } else {
+            $jsonPayload = [
+                'chat_id'                  => $chatId,
+                'text'                     => $caption,
+                'parse_mode'               => 'HTML',
+                'disable_web_page_preview' => true,
+            ];
+            if ($threadId > 0) {
+                $jsonPayload['message_thread_id'] = $threadId;
+            }
+
+            $res = $clientJson->post("{$apiBase}/sendMessage", $jsonPayload);
+        }
+    } else {
+        $jsonPayload = [
+            'chat_id'                  => $chatId,
+            'text'                     => $caption,
+            'parse_mode'               => 'HTML',
+            'disable_web_page_preview' => true,
+        ];
+        if ($threadId > 0) {
+            $jsonPayload['message_thread_id'] = $threadId;
+        }
+
+        $res = $clientJson->post("{$apiBase}/sendMessage", $jsonPayload);
+    }
+
+    if ($res->successful()) {
+        $customer->update(['shared_to_telegram' => true]);
+        return back()->with('success', 'Shared to Telegram.');
+    }
+
+    Log::error('Telegram share failed', ['status' => $res->status(), 'body' => $res->body()]);
+    return back()->with('error', 'Telegram share failed: ' . $res->status());
+}
+
 
     public function destroy(Customer $customer)
     {

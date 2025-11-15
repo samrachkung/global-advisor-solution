@@ -11,6 +11,7 @@ return [
     'our_services' => 'Our Services',
     'learn_more' => 'Learn More',
     'apply_now' => 'Apply Now',
+    'job_apply_now' => 'Apply Now',
     'read_more' => 'Read More',
     'submit' => 'Submit',
     'send_message' => 'Send Message',

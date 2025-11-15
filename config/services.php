@@ -26,7 +26,7 @@ return [
     ],
 
     'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
+        'key' => env('AWS_ACCESS_KEY_ID'    ),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
@@ -34,6 +34,10 @@ return [
     'telegram' => [
         'bot_token' => env('TELEGRAM_BOT_TOKEN'),
         'chat_id' => env('TELEGRAM_CHAT_ID'),
+        'new_customer_thread_id'  => env('TELEGRAM_NEW_CUSTOMER_THREAD_ID'),
+        'job_apply_thread_id'     => env('TELEGRAM_JOB_APPLY_THREAD_ID'),
+        'ca_path'                => env('TELEGRAM_CA_PATH', null),
+        'new_customer_consultant_thread_id'  => env('TELEGRAM_NEW_CUSTOMER_CONSULTANT_THREAD_ID'),
     ],
 
 

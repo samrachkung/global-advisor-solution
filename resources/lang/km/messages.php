@@ -11,6 +11,7 @@ return [
     'our_services' => 'សេវាកម្មរបស់យើង',
     'learn_more' => 'ស្វែងយល់បន្ថែម',
     'apply_now' => 'ប្រឹក្សាឥឡូវនេះ',
+    'job_apply_now' => 'ដាក់ស្នើការងារឥឡូវនេះ',
     'read_more' => 'អានបន្ថែម',
     'submit' => 'ដាក់ស្នើ',
     'send_message' => 'ផ្ញើសារ',
@@ -40,7 +41,7 @@ return [
     'benefits' => 'អត្ថប្រយោជន៍',
     'full_name' => 'ឈ្មោះពេញ',
     'resume' => 'ប្រវត្តិរូប',
-    'cover_letter' => 'លិខិតបំពង',
+    'cover_letter' => 'អត្ថបទ Cover Letter',
     'submit_application' => 'ដាក់ពាក្យ',
     'application_submitted' => 'ពាក្យរបស់អ្នកត្រូវបានដាក់ដោយជោគជ័យ!',
 
